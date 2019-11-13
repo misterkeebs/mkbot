@@ -43,7 +43,7 @@ module.exports = async function(client, msg) {
       }, {});
 
       const keys = Object.keys(input);
-      const missing = ['maker', 'sculpt', 'colorway'].filter(k => keys.indexOf(k) === -1);
+      const missing = ['maker', 'sculpt'].filter(k => keys.indexOf(k) === -1);
 
       if (missing.length > 0) {
         return sendHelp(msg, {

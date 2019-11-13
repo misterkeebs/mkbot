@@ -1,4 +1,5 @@
 const { Image, createCanvas, loadImage } = require('canvas');
+const { formatName } = require('./format');
 
 const imgWidth = 300;
 const imgHeight = imgWidth;
@@ -39,7 +40,7 @@ class ListImage {
             ctx.font = `${fontSize}px serif`;
             ctx.fillStyle = '#fff';
             ctx.textAlign = 'center';
-            const text = `${src.sculpt} ${src.colorway}`;
+            const text = formatName(src);
             ctx.fillText(text, x + (width/2), y + height + 5, width);
             ctx.drawImage(img, x, y, imgWidth, imgHeight);
           }));

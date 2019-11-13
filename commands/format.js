@@ -10,11 +10,16 @@ function formatMatches(artisans, term) {
   ];
 }
 
+function formatName(data) {
+  const colorway = data.colorway ? ` ${data.colorway}` : '';
+  return `${data.sculpt}${colorway}`;
+}
+
 function format(data) {
   const collection = data.collection && data.collection.length
     ? ` from ${data.collection}`
     : '';
-  return `${data.maker} - **${data.sculpt} ${data.colorway}**${collection}`;
+  return `${data.maker} - **${formatName(data)}**${collection}`;
 }
 
 function card(data) {
@@ -36,4 +41,4 @@ function card(data) {
   return embed;
 };
 
-module.exports = { format, formatMatches, card };
+module.exports = { format, formatMatches, formatName, card };
