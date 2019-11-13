@@ -1,5 +1,5 @@
 const Base = require('./base');
-const { insert, select } = require('../db');
+const { insert, select, update } = require('../db');
 const ServerUser = require('./server-user');
 
 class Server extends Base {
@@ -33,8 +33,15 @@ class Server extends Base {
     console.log(' *** userData', userData);
     console.log(' *** channelData', channelData);
 
+    if (cmd.override) {
+      return cmd.override;
+    }
+
     if (cmd.userRole) {
       const userRole = await ServerUser.findUserRole(client, userData.id);
+      if (userRole === 'admin') {
+        return true;
+      }
       console.log('Command needs', cmd.userRole, 'user is', userRole);
       return cmd.userRole === userRole;
     }
@@ -70,6 +77,16 @@ class Server extends Base {
     }
 
     return true;
+  }
+
+  async save() {
+    const { whitelist, blacklist } = this;
+    return await this.update({
+      table: 'servers',
+      set: { whitelist, blacklist },
+      where: 'server_id = $1',
+      data: [this.server_id],
+    });
   }
 }
 

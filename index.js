@@ -10,17 +10,29 @@ const TOKEN = process.env.TOKEN;
 const bot = new Discord.Client();
 
 const COMMANDS = {
+  // artisan search/display
   'pic': { public: true, module: require('./commands/pic') },
+  'rand': { public: true, module: require('./commands/random') },
+  'catalog': { public: true, module: require('./commands/catalog') },
+
+  // list management
   'list': { public: true, module: require('./commands/user-list') },
   'wishlist': { public: true, module: require('./commands/wishlist') },
   'wl': { public: true, module: require('./commands/wishlist') },
-  'catalog': { public: true, module: require('./commands/catalog') },
-  'rand': { public: true, module: require('./commands/random') },
+
+  // submission management
   'review': { userRole: 'reviewer', module: require('./commands/review') },
   'addm': { userRole: 'reviewer', module: require('./commands/add-maker') },
   'fix': { userRole: 'reviewer', module: require('./commands/fix') },
   'app': { userRole: 'reviewer', module: require('./commands/approve') },
   'rej': { userRole: 'reviewer', module: require('./commands/reject') },
+
+  // user management
+  'role': { role: 'admin', module: require('./commands/role') },
+  'server-role': { role: 'server-admin', module: require('./commands/server-role') },
+
+  // permissions management
+  'channel': { override: true, public: true, role: 'server-admin', module: require('./commands/channel') }
 };
 
 bot.on('ready', () => {

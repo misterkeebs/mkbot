@@ -1,4 +1,4 @@
-const { select, insert, doDelete } = require('../db');
+const { select, insert, update, doDelete } = require('../db');
 
 class Base {
   constructor(client, data={}) {
@@ -22,6 +22,10 @@ class Base {
 
   delete(table, where) {
     return doDelete(this.client, table, where);
+  }
+
+  update(options) {
+    return update(this.client, options);
   }
 }
 

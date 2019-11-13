@@ -49,8 +49,8 @@ module.exports = {
     RETURNING *
     `;
 
-    console.log('sql', sql, _.flattenDeep(data));
-    return db.query(sql, _.flattenDeep(data)).then(res => {
+    console.log('sql', sql, _.flatten(data));
+    return db.query(sql, _.flatten(data)).then(res => {
       return res.rows[0];
     });
   },
