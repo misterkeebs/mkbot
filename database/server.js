@@ -33,10 +33,6 @@ class Server extends Base {
     console.log(' *** userData', userData);
     console.log(' *** channelData', channelData);
 
-    if (cmd.override) {
-      return cmd.override;
-    }
-
     if (cmd.userRole) {
       const userRole = await ServerUser.findUserRole(client, userData.id);
       if (userRole === 'admin') {
@@ -47,16 +43,20 @@ class Server extends Base {
     }
 
     if (guildData && channelData) {
-      const server = await Server.find(client, guildData.id);
-      if (server && !(await server.canExecute(cmd, msg))) {
-        return false;
-      }
-
       if (userData) {
         const serverUser = await ServerUser.find(client, guildData.id, userData.id)
         if (serverUser && !(await serverUser.canExecute(cmd, msg))) {
           return false;
         }
+      }
+
+      if (cmd.override) {
+        return cmd.override;
+      }
+
+      const server = await Server.find(client, guildData.id);
+      if (server && !(await server.canExecute(cmd, msg))) {
+        return false;
       }
     }
 

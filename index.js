@@ -32,7 +32,7 @@ const COMMANDS = {
   'server-role': { role: 'server-admin', module: require('./commands/server-role') },
 
   // permissions management
-  'channel': { override: true, public: true, role: 'server-admin', module: require('./commands/channel') }
+  'channel': { role: 'server-admin', override: true, public: true, role: 'server-admin', module: require('./commands/channel') }
 };
 
 bot.on('ready', () => {
