@@ -27,12 +27,11 @@ const COMMANDS = {
   'app': { userRole: 'reviewer', module: require('./commands/approve') },
   'rej': { userRole: 'reviewer', module: require('./commands/reject') },
 
+  // permissions management
+  'channel': { permission: 'MANAGE_CHANNELS', public: true, anyChannel: true, module: require('./commands/channel') },
+
   // user management
   'role': { role: 'admin', module: require('./commands/role') },
-  'server-role': { role: 'server-admin', module: require('./commands/server-role') },
-
-  // permissions management
-  'channel': { role: 'server-admin', override: true, public: true, role: 'server-admin', module: require('./commands/channel') }
 };
 
 bot.on('ready', () => {

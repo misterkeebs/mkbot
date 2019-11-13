@@ -43,15 +43,15 @@ class Server extends Base {
     }
 
     if (guildData && channelData) {
-      if (userData) {
-        const serverUser = await ServerUser.find(client, guildData.id, userData.id)
-        if (serverUser && !(await serverUser.canExecute(cmd, msg))) {
+      if (userData && cmd.permission) {
+        if (!msg.channel.permissionsFor(msg.member).has(cmd.permission)) {
+          console.log('User', msg.author.username, 'does not have', cmd.permission, 'on', `#${msg.channel.name} channel`);
           return false;
         }
       }
 
-      if (cmd.override) {
-        return cmd.override;
+      if (cmd.anyChannel) {
+        return cmd.anyChannel;
       }
 
       const server = await Server.find(client, guildData.id);
