@@ -9,13 +9,13 @@ const TOKEN = process.env.TOKEN;
 const bot = new Discord.Client();
 
 const COMMANDS = {
-  'pic': require('./commands/pic'),
-  'catalog': require('./commands/catalog'),
-  'rand': require('./commands/random'),
+  'pic': { public: true, module: require('./commands/pic') },
+  'list': { public: true, module: require('./commands/user-list') },
+  'wishlist': { public: true, module: require('./commands/wishlist') },
+  'wl': { public: true, module: require('./commands/wishlist') },
+  'catalog': { public: true, module: require('./commands/catalog') },
+  'rand': { public: true, module: require('./commands/random') },
   'review': require('./commands/review'),
-  'list': require('./commands/user-list'),
-  'wishlist': require('./commands/wishlist'),
-  'wl': require('./commands/wishlist'),
   'addm': require('./commands/add-maker'),
   'fix': require('./commands/fix'),
   'app': require('./commands/approve'),
@@ -27,7 +27,8 @@ bot.on('ready', () => {
 });
 
 bot.on('message', async msg => {
-  if (msg.channel && msg.channel.type === 'dm') {
+  const isDM = msg.channel && msg.channel.type === 'dm';
+  if (isDM) {
     if (await handleDM(client, msg)) return;
   }
 
@@ -38,9 +39,15 @@ bot.on('message', async msg => {
   if (!cmdKey) return;
 
   try {
-    msg.channel.startTyping();
     const params = content.split(' ').slice(1).join(' ');
-    await COMMANDS[cmdKey](client, msg, params);
+    const cmdDef = COMMANDS[cmdKey];
+    const module = cmdDef instanceof Object ? cmdDef.module : cmdDef;
+    if (!cmdDef.public) return;
+
+    console.log('msg', msg.guild);
+
+    msg.channel.startTyping();
+    await module(client, msg, params);
   } catch (err) {
     console.error('Error on', cmdKey, err, msg);
   } finally {

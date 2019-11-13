@@ -9,7 +9,6 @@ class List extends Base {
   }
 
   static async findOrCreate(client, type, user_id) {
-    console.log('FOC client', client);
     const list = await List.findByUser(client, type, user_id);
     if (list) return list;
 

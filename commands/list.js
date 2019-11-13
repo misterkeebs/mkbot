@@ -14,6 +14,7 @@ const SUBCOMMANDS = {
 class ListCommand extends Base {
   constructor(type='list', client, msg, content) {
     super(client, msg, content);
+    this.isDM = msg.channel && msg.channel.type === 'dm';
     this.type = type;
   }
 
@@ -23,6 +24,9 @@ class ListCommand extends Base {
       return this.view(this.client, this.msg, this.content);
     }
     const subcommand = SUBCOMMANDS[this.parts.shift()];
+    if (!this.isDM) {
+      return this.reply(`\`!${this.type}\` subcommands cannot be used in public`);
+    };
     if (!subcommand) return this.error(`Error: invalid ${this.type} command`);
     return this[subcommand]();
   }
