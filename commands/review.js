@@ -37,7 +37,7 @@ module.exports = async function(client, msg, content) {
 
         - to add it, use \`!addm ${data.maker}\`
         - to fix the maker name, use \`!fix maker ${data.submission_id} [maker name]\`
-        - to reject this submission, use \`!dec ${data.submission_id}\`
+        - to reject this submission, use \`!rej ${data.submission_id}\`
 
         After taking action, you can check this entry again with \`!review ${data.submission_id}\`
         `);
