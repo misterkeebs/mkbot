@@ -17,7 +17,6 @@ class Base {
   }
 
   insert(table, options) {
-    console.log(' *** INSERT client', this.client);
     return insert(this.client, table, options);
   }
 
