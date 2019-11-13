@@ -64,7 +64,7 @@ module.exports = async function(client, msg) {
 
       msg.reply(dedent`
         Got it! Thanks for the submission!
-        You can check the status of your submission at any time using: \`!sub ${id}\`.
+        You can check the status of your submission at any time using: \`!review ${id}\`.
       `);
       resolve(true);
     }
