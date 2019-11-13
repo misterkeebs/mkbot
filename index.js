@@ -61,7 +61,8 @@ bot.on('message', async msg => {
     // user can't execute this command
     if (!await Server.canExecute(client, cmdDef, msg)) return;
 
-    console.log('msg', msg);
+    // console.log('msg', msg);
+    console.log('member', msg.member);
 
     msg.channel.startTyping();
     await module(client, msg, params);

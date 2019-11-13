@@ -35,6 +35,8 @@ exports.down = function(db) {
   return Promise.all([
     db.removeIndex('list_artisans', 'ix_list_artisans_unique'),
 
+    db.removeIndex('list_artisans', 'ix_lists_unique_type_per_user'),
+
     db.removeForeignKey('list_artisans', 'fk_list_artisans_lists', {
       dropIndex: true }),
   ]);

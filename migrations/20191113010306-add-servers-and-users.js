@@ -23,10 +23,9 @@ exports.up = function(db) {
       blacklist: 'varchar[]',
     }),
 
-    db.createTable('server_users', {
+    db.createTable('users', {
       user_role_id: { type: 'int', primaryKey: true, autoIncrement: true },
       created_at: { type: 'timestamp', defaultValue: { toString: () => 'CURRENT_TIMESTAMP' } },
-      server_id: 'string',
       user_id: 'string',
       role: 'string',
     }),
@@ -36,7 +35,7 @@ exports.up = function(db) {
 exports.down = function(db) {
   return Promise.all([
     db.dropTable('servers'),
-    db.dropTable('server_users'),
+    db.dropTable('users'),
   ]);
 };
 

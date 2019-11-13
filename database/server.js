@@ -1,6 +1,6 @@
 const Base = require('./base');
 const { insert, select, update } = require('../db');
-const ServerUser = require('./server-user');
+const User = require('./server-user');
 
 class Server extends Base {
   static async find(client, discord_guild_id) {
@@ -34,7 +34,7 @@ class Server extends Base {
     console.log(' *** channelData', channelData);
 
     if (cmd.userRole) {
-      const userRole = await ServerUser.findUserRole(client, userData.id);
+      const userRole = await User.findUserRole(client, userData.id);
       if (userRole === 'admin') {
         return true;
       }
