@@ -5,7 +5,7 @@ const Server = require('../database/server');
 
 const addServer = async (client, whitelist, blacklist) => {
   const sql = `
-    INSERT INTO servers (server_id, whitelist_channels, blacklist_channels)
+    INSERT INTO servers (server_id, whitelist, blacklist)
     VALUES ($1, $2, $3);`;
   await client.query(sql, ['SERVER_ID', whitelist, blacklist]);
 };
@@ -32,7 +32,7 @@ describe('Server DB', () => {
       });
 
       it('returns the server', async () => {
-        expect(server.whitelist_channels).to.eql([]);
+        expect(server.whitelist).to.eql([]);
       });
     });
 
@@ -69,7 +69,7 @@ describe('Server DB', () => {
       it('returns the existing server', () => {
         expect(server).to.not.be.undefined;
         expect(server.server_id).to.eql('SERVER_ID');
-        expect(server.whitelist_channels).to.eql(['channel1']);
+        expect(server.whitelist).to.eql(['channel1']);
       });
     });
   });

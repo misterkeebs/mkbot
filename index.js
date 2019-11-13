@@ -3,6 +3,7 @@ require('dotenv').config();
 const { Client } = require('pg');
 const Discord = require('discord.js');
 
+const Server = require('./database/server');
 const handleDM = require('./direct.js');
 
 const TOKEN = process.env.TOKEN;
@@ -15,11 +16,11 @@ const COMMANDS = {
   'wl': { public: true, module: require('./commands/wishlist') },
   'catalog': { public: true, module: require('./commands/catalog') },
   'rand': { public: true, module: require('./commands/random') },
-  'review': require('./commands/review'),
-  'addm': require('./commands/add-maker'),
-  'fix': require('./commands/fix'),
-  'app': require('./commands/approve'),
-  'rej': require('./commands/reject'),
+  'review': { userRole: 'reviewer', module: require('./commands/review') },
+  'addm': { userRole: 'reviewer', module: require('./commands/add-maker') },
+  'fix': { userRole: 'reviewer', module: require('./commands/fix') },
+  'app': { userRole: 'reviewer', module: require('./commands/approve') },
+  'rej': { userRole: 'reviewer', module: require('./commands/reject') },
 };
 
 bot.on('ready', () => {
@@ -42,9 +43,14 @@ bot.on('message', async msg => {
     const params = content.split(' ').slice(1).join(' ');
     const cmdDef = COMMANDS[cmdKey];
     const module = cmdDef instanceof Object ? cmdDef.module : cmdDef;
-    if (!cmdDef.public) return;
 
-    console.log('msg', msg.guild);
+    // command doesn't allow public execution
+    if (!isDM && !cmdDef.public) return;
+
+    // user can't execute this command
+    if (!await Server.canExecute(client, cmdDef, msg)) return;
+
+    console.log('msg', msg);
 
     msg.channel.startTyping();
     await module(client, msg, params);

@@ -16,26 +16,19 @@ exports.setup = function(options, seedLink) {
 
 exports.up = function(db) {
   return Promise.all([
-    db.createTable('users', {
-      user_id: { type: 'int', primaryKey: true, autoIncrement: true },
-      created_at: { type: 'timestamp', defaultValue: { toString: () => 'CURRENT_TIMESTAMP' } },
-      discord_user_id: 'string',
-      discord_user: 'string',
-    }),
-
-    db.createTable('user_roles', {
-      user_role_id: { type: 'int', primaryKey: true, autoIncrement: true },
-      created_at: { type: 'timestamp', defaultValue: { toString: () => 'CURRENT_TIMESTAMP' } },
-      user_id: 'string',
-      server_id: 'string',
-      roles: 'varchar[]',
-    }),
-
     db.createTable('servers', {
       server_id: { type: 'string', primaryKey: true },
       created_at: { type: 'timestamp', defaultValue: { toString: () => 'CURRENT_TIMESTAMP' } },
-      whitelist_channels: 'varchar[]',
-      blacklist_channels: 'varchar[]',
+      whitelist: 'varchar[]',
+      blacklist: 'varchar[]',
+    }),
+
+    db.createTable('server_users', {
+      user_role_id: { type: 'int', primaryKey: true, autoIncrement: true },
+      created_at: { type: 'timestamp', defaultValue: { toString: () => 'CURRENT_TIMESTAMP' } },
+      server_id: 'string',
+      user_id: 'string',
+      role: 'string',
     }),
   ]);
 };
@@ -43,8 +36,7 @@ exports.up = function(db) {
 exports.down = function(db) {
   return Promise.all([
     db.dropTable('servers'),
-    db.dropTable('user_roles'),
-    db.dropTable('users'),
+    db.dropTable('server_users'),
   ]);
 };
 
