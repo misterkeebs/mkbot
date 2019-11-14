@@ -1,4 +1,5 @@
 {
   "domain": "mrkeebs.auth0.com",
-  "clientId": "IAkI2XQ14Vno3SuFceBovm2pT8cpY2Xo"
+  "clientId": "IAkI2XQ14Vno3SuFceBovm2pT8cpY2Xo",
+  "audience": "http://fcoury.pagekite.me/"
 }

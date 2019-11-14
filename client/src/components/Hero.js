@@ -9,7 +9,7 @@ const Hero = () => (
     <h1 className="mb-4">MKBot Artisan Discord Bot</h1>
 
     <p>
-      <img src={demo} width="400"/>
+      <img src={demo} width="400" alt="demo" />
     </p>
 
     <p className="lead">

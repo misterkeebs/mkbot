@@ -1,6 +1,6 @@
 const Base = require('./base');
 const { insert, select, update } = require('../db');
-const User = require('./server-user');
+const User = require('./user');
 
 class Server extends Base {
   static async find(client, discord_guild_id) {

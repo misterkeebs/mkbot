@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const { select, insert, update, doDelete } = require('../db');
 
 class Base {
@@ -6,6 +8,10 @@ class Base {
     Object.keys(data).forEach(k => {
       this[k] = data[k];
     });
+  }
+
+  toJSON() {
+    return _.omit(this, 'client');
   }
 
   query(sql, data) {

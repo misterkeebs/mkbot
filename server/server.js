@@ -1,0 +1,31 @@
+const jwt = require('express-jwt');
+const jwks = require('jwks-rsa');
+
+const UserRoutes = require('./user');
+const ArtisanRoutes = require('./artisans');
+
+class ApiServer {
+  constructor(client, app) {
+    const jwksUri = `${process.env.AUTH0_URL}/.well-known/jwks.json`;
+    this.client = client;
+    this.app = app;
+    this.jwtCheck = jwt({
+      secret: jwks.expressJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri
+      }),
+      audience: 'http://fcoury.pagekite.me/',
+      issuer: `${process.env.AUTH0_URL}/`,
+      algorithms: ['RS256']
+    });
+  }
+
+  addRoutes() {
+    new UserRoutes(this).routes();
+    new ArtisanRoutes(this).routes();
+  }
+}
+
+module.exports = ApiServer;

@@ -1,6 +1,17 @@
 const Base = require('./base');
 
+const { select } = require('../db');
+const table = 'artisan';
+
 class Artisan extends Base {
+  static async getAll(client, options) {
+    const { order='maker, sculpt, colorway', page=1, perPage } = options;
+    const fields = 'a.artisan_id, m.name AS maker, a.sculpt, a.colorway, a.image';
+    const table = 'artisans a';
+    const joins = ['makers m ON m.maker_id = a.maker_id'];
+    return select(client, { fields, table, order, joins, page, perPage });
+  }
+
   static async search(client, _term) {
     const [rest, numStr] = _term.split('/');
     const num = numStr && numStr.length
