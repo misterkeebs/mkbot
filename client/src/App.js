@@ -7,6 +7,7 @@ import Loading from "./components/Loading";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import Home from "./views/Home";
+import Dashboard from "./views/Dashboard";
 import Profile from "./views/Profile";
 import { useAuth0 } from "./react-auth0-spa";
 import history from "./utils/history";
@@ -19,11 +20,13 @@ import initFontAwesome from "./utils/initFontAwesome";
 initFontAwesome();
 
 const App = () => {
-  const { loading } = useAuth0();
+  const { loading, isAuthenticated } = useAuth0();
 
   if (loading) {
     return <Loading />;
   }
+
+  const mainComponent = isAuthenticated ? Dashboard : Home;
 
   return (
     <Router history={history}>
@@ -31,7 +34,7 @@ const App = () => {
         <NavBar />
         <Container className="flex-grow-1 mt-5">
           <Switch>
-            <Route path="/" exact component={Home} />
+            <Route path="/" exact component={mainComponent} />
             <PrivateRoute path="/profile" component={Profile} />
           </Switch>
         </Container>
