@@ -32,6 +32,7 @@ const COMMANDS = {
 
   // user management
   'role': { role: 'admin', module: require('./commands/role') },
+  'email': { module: require('./commands/email') },
 };
 
 bot.on('ready', () => {
@@ -65,6 +66,8 @@ bot.on('message', async msg => {
     console.log('member', msg.member);
 
     msg.channel.startTyping();
+    msg.cmdDef = cmdDef;
+    msg.cmdDef.key = cmdKey;
     await module(client, msg, params);
   } catch (err) {
     console.error('Error on', cmdKey, err, msg);

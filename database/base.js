@@ -11,7 +11,10 @@ class Base {
   }
 
   toJSON() {
-    return _.omit(this, 'client');
+    return _.chain(this)
+      .omit('client')
+      .omitBy(_.isFunction)
+      .value();
   }
 
   query(sql, data) {
@@ -32,6 +35,12 @@ class Base {
 
   update(options) {
     return update(this.client, options);
+  }
+
+  async save(pk) {
+    const set = this.toJSON();
+    const where = `${pk} = $1`;
+    return await this.update({ table, set, where, data: [this[pk]] });
   }
 }
 

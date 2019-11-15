@@ -8,11 +8,11 @@ class RouterConfig {
   }
 
   get(path, fn) {
-    this.app.get(path, fn);
+    this.app.get(`/api${path}`, fn);
   }
 
   getAuth(path, fn) {
-    this.app.get(path, this.jwtCheck, async (req, res, next) => {
+    this.app.get(`/api${path}`, this.jwtCheck, async (req, res, next) => {
       req.userProfile = await this.fetchUserProfile(req);
       return fn(req, res, next);
     });
@@ -20,7 +20,6 @@ class RouterConfig {
 
   async fetchUserProfile(req) {
     const url = `${process.env.AUTH0_URL}/userinfo`;
-    console.log('url', url);
     const res = await axios({
       url,
       headers: { authorization: req.headers.authorization },

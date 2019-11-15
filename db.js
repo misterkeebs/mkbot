@@ -3,11 +3,16 @@ const _ = require('lodash');
 
 function parseWhere(def) {
   if (_.isObject(def.where)) {
+    const nullWheres = _.pickBy(def.where, _.isNull);
+    def.where = _.pickBy(def.where, v => !_.isNull(v));
+
     const whereData = Object.values(def.where);
     const initData = def.data || [];
     const ix = initData.length;
     const where = Object.keys(def.where).map((f, i) => `${f} = $${i+ix+1}`);
     const data = _.flatten([initData, whereData]);
+
+    Object.keys(nullWheres).forEach(k => where.push(`${k} IS NULL`));
     return { where, data };
   }
   const { data, where } = def;

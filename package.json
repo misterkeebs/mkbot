@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@sendgrid/mail": "^6.4.0",
     "aws-sdk": "^2.562.0",
     "axios": "^0.19.0",
     "canvas": "^2.6.0",
@@ -20,7 +21,10 @@
     "jimp": "^0.8.5",
     "jwks-rsa": "^1.6.0",
     "lodash": "^4.17.15",
-    "mime-types": "^2.1.24"
+    "mime-types": "^2.1.24",
+    "morgan": "^1.9.1",
+    "pluralize": "^8.0.0",
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "chai": "^4.2.0",

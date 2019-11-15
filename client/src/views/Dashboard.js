@@ -1,40 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
 import { useAuth0 } from '../react-auth0-spa';
 
-const Dashboard = () => {
-  const [showResult, setShowResult] = useState(false);
-  const [response, setResponse] = useState('');
-  const { getTokenSilently } = useAuth0();
-
-  const callApi = async () => {
-    try {
-      const token = await getTokenSilently();
-
-      const response = await fetch('http://fcoury.pagekite.me/user', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      });
-
-      const responseData = await response.json();
-
-      setShowResult(true);
-      setResponse(responseData);
-    } catch (error) {
-      console.error(error);
+const getUser = async (getTokenSilently) => {
+  const token = await getTokenSilently();
+  const response = await fetch('/api/user', {
+    headers: {
+      Authorization: `Bearer ${token}`,
     }
-  };
+  });
+  return response.json();
+};
 
-  return (
-    <>
-      <div>
-        Dashboard
-        <button onClick={callApi}>Ping API</button>
-      </div>
-      <hr/>
-      <code>{JSON.stringify(response, null, 2)}</code>
-    </>
-  );
+const Dashboard = () => {
+  const { getTokenSilently } = useAuth0();
+  const [user, setUser] = useState();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getUser(getTokenSilently).then(user => {
+      setUser(user);
+      setLoading(false);
+    });
+  }, [getTokenSilently]);
+
+  if (loading) {
+    return 'Loading';
+  }
+
+  if (user.discord_user_id) {
+    return <div>You're all set</div>;
+  }
+
+  return <div>In order to get started you need to link you Discord account</div>;
 };
 
 export default Dashboard;

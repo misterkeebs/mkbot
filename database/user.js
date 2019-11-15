@@ -32,6 +32,15 @@ class User extends Base {
 
     return await User.create(client, fields);
   }
+
+  getDiscordInfo() {
+    const bot = new Discord.Client();
+    bot.login(process.env.TOKEN)
+  }
+
+  async save() {
+    return await this.save('user_id');
+  }
 }
 
 module.exports = User;
