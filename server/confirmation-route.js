@@ -16,9 +16,9 @@ class ConfirmationRoute {
       }
 
       const { discord_user_id, email } = conf;
-      const user = await User.find(this.client, { discord_user_id });
+      let user = await User.find(this.client, { discord_user_id });
       if (!user) {
-        await User.create(this.client, { discord_user_id, email });
+        user = await User.create(this.client, { discord_user_id, email });
       } else {
         user.email = conf.email;
         await user.save();
@@ -26,6 +26,8 @@ class ConfirmationRoute {
 
       conf.confirmed_at = new Date();
       await conf.save();
+
+      user.sendPrivateMessage(`Your email **${email}** is now confirmed!`);
 
       res.redirect('/?msg=email+confirmed');
     });

@@ -1,3 +1,5 @@
+const Discord = require('discord.js');
+
 const Base = require('./base');
 const { insert, select } = require('../db');
 
@@ -40,6 +42,21 @@ class User extends Base {
 
   async save() {
     return await this.save('user_id');
+  }
+
+  async sendPrivateMessage(text) {
+    const { discord_user_id } = this;
+    return new Promise(async (resolve, reject) => {
+      const discord = new Discord.Client();
+      discord.on('ready', async () => {
+        const user = await discord.fetchUser(discord_user_id);
+        console.log('user', user);
+        const msgRes = await user.sendMessage(text);
+        console.log('msgRes', msgRes);
+        return Promise.resolve(msgRes);
+      });
+      return await discord.login(process.env.TOKEN);
+    });
   }
 }
 
