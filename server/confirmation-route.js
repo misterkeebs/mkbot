@@ -27,9 +27,9 @@ class ConfirmationRoute {
       conf.confirmed_at = new Date();
       await conf.save();
 
-      user.sendPrivateMessage(`Your email **${email}** is now confirmed!`);
+      await user.sendPrivateMessage(`Your email **${email}** is now confirmed!`);
 
-      res.redirect('/?msg=email+confirmed');
+      res.redirect('/?msg=Your+email+is+now+confirmed!');
     });
   }
 }

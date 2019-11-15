@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { withRouter } from 'react-router'
 
+import Loading from "../components/Loading";
+import Alert from "../components/Alert";
 import { useAuth0 } from '../react-auth0-spa';
+import qs from 'query-string';
 
 const getUser = async (getTokenSilently) => {
   const token = await getTokenSilently();
@@ -12,10 +16,12 @@ const getUser = async (getTokenSilently) => {
   return response.json();
 };
 
-const Dashboard = () => {
+const Dashboard = (props) => {
+  console.log('props', props);
   const { getTokenSilently } = useAuth0();
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(true);
+  const { msg } = qs.parse(window.location.search);
 
   useEffect(() => {
     getUser(getTokenSilently).then(user => {
@@ -25,14 +31,30 @@ const Dashboard = () => {
   }, [getTokenSilently]);
 
   if (loading) {
-    return 'Loading';
+    return <Loading />;
   }
 
+  let message = 'In order to get started you need to link you Discord account';
   if (user.discord_user_id) {
-    return <div>You're all set</div>;
+    message = `You're all set`;
   }
 
-  return <div>In order to get started you need to link you Discord account</div>;
+  const onDismiss = () => {
+    const { location, history } = props;
+    location.search = '';
+    history.push(location);
+  };
+
+  const alert = msg && (
+    <Alert message={msg} onDismiss={onDismiss} />
+  );
+
+  return (
+    <>
+      {alert}
+      <div>{message}</div>
+    </>
+  );
 };
 
-export default Dashboard;
+export default withRouter(Dashboard);

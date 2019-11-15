@@ -6,7 +6,6 @@ const { insert, select } = require('../db');
 
 module.exports = (table, additions={}) => {
   const pk = `${inflex.singular(table)}_id`;
-  console.log('pk', pk);
   const orm = class Orm extends Base {
     static async find(client, where) {
       const data = await select(client, { table, where });
