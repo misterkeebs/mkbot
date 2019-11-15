@@ -13,8 +13,8 @@ const Hero = () => (
     </p>
 
     <p className="lead">
-      Allows Discord users to research makers, sculpts, colorways and
-      curate the artisans they own and the ones they are looking for.
+      Manage and share your artisan collection and the ones you're
+      looking for using a community driven database. All in one place!
     </p>
   </div>
 );
