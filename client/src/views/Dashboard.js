@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { withRouter } from 'react-router'
 
-import Loading from "../components/Loading";
+import DataLoading from "../components/DataLoading";
 import Alert from "../components/Alert";
 import { useAuth0 } from '../react-auth0-spa';
 import qs from 'query-string';
@@ -17,7 +17,6 @@ const getUser = async (getTokenSilently) => {
 };
 
 const Dashboard = (props) => {
-  console.log('props', props);
   const { getTokenSilently } = useAuth0();
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(true);
@@ -31,7 +30,7 @@ const Dashboard = (props) => {
   }, [getTokenSilently]);
 
   if (loading) {
-    return <Loading />;
+    return <DataLoading />;
   }
 
   let message = 'In order to get started you need to link you Discord account';
