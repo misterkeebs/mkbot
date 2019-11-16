@@ -2,7 +2,8 @@ const dedent = require('dedent');
 const _ = require('lodash');
 
 function parseWhere(def) {
-  if (_.isObject(def.where)) {
+  console.log(' *** def.where', def.where, _.isObject(def.where));
+  if (!_.isArray(def.where) && _.isObject(def.where)) {
     const nullWheres = _.pickBy(def.where, _.isNull);
     def.where = _.pickBy(def.where, v => !_.isNull(v));
 
