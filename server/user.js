@@ -7,7 +7,8 @@ const List = require('../database/list');
 class UserRoutes extends RouterConfig {
   routes() {
     this.getAuth('/user', this.getUser.bind(this));
-    this.getAuth('/user/artisans', this.getUserArtisans.bind(this));
+    this.getAuth('/user/list', this.getUserArtisans.bind(this));
+    this.getAuth('/user/wishlist', this.getUserWishlist.bind(this));
   }
 
   async getUser(req, res, next) {
@@ -16,12 +17,23 @@ class UserRoutes extends RouterConfig {
     res.json(user);
   }
 
-  async getUserArtisans(req, res, next) {
+  async getUserList(type, req, res, next) {
     const { userProfile } = req;
     const user = await User.findOrCreate(this.client, { email: userProfile.email });
-    const list = await List.findByUser(this.client, 'list', user.discord_user_id);
+    const list = await List.findByUser(this.client, type, user.discord_user_id);
+    if (!list) {
+      return res.json(null);
+    }
     const artisans = await list.getArtisans();
     res.json(artisans);
+  }
+
+  async getUserArtisans(req, res, next) {
+    return this.getUserList('list', req, res, next);
+  }
+
+  async getUserWishlist(req, res, next) {
+    return this.getUserList('wishlist', req, res, next);
   }
 }
 

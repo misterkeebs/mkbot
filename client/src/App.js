@@ -19,10 +19,11 @@ import "./App.css";
 
 // fontawesome
 import initFontAwesome from "./utils/initFontAwesome";
+import WishList from "./views/WishList";
 initFontAwesome();
 
 const App = () => {
-  const { loading, isAuthenticated } = useAuth0();
+  const { loading } = useAuth0();
 
   if (loading) {
     return <Loading />;
@@ -37,6 +38,7 @@ const App = () => {
             <Route path="/" exact component={Home} />
             <PrivateRoute path="/dashboard" exact component={Dashboard} />
             <PrivateRoute path="/artisans" exact component={Artisans} />
+            <PrivateRoute path="/wishlist" exact component={WishList} />
             <PrivateRoute path="/profile" component={Profile} />
           </Switch>
         </Container>
