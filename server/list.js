@@ -16,7 +16,7 @@ class ListRoutes extends RouterConfig {
 
   async addArtisan(req, res, next) {
     const { type, artisan_id } = req.params;
-    const list = await List.findByUser(this.client, type, this.user.discord_user_id);
+    const list = await List.findOrCreate(this.client, type, this.user.discord_user_id);
     const response = await list.add({ artisan_id });
     console.log(' *** response', response);
     res.json({ added: response && response.rowCount > 0 });
