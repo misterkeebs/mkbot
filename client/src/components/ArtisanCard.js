@@ -5,7 +5,7 @@ import {
 } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faTrashAlt, faTimes, faCheck,
+  faTrashAlt, faTimes, faCheck, faListAlt, faHeart,
 } from '@fortawesome/free-solid-svg-icons'
 
 import DataLoading from './DataLoading';
@@ -18,7 +18,7 @@ function formatName(data) {
 const ArtisanCard = (props) => {
   const [showIcons, setShowIcons] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const { artisan, onRemove, processing } = props;
+  const { artisan, onRemove, onAdd, processing } = props;
 
   const cancel = () => {
     setShowConfirm(false);
@@ -35,6 +35,18 @@ const ArtisanCard = (props) => {
       <DataLoading />
     </CardImgOverlay>
   );
+
+  const addTo = (list) => () => {
+    onAdd && onAdd(list, artisan);
+  };
+
+  const addOverlay = onAdd && (showIcons &&
+    <CardImgOverlay
+      style={{display: showIcons ? 'block' : 'none'}}
+    >
+      <FontAwesomeIcon icon={faListAlt} color="black" onClick={addTo('list')} /> &nbsp;
+      <FontAwesomeIcon icon={faHeart} color="black" onClick={addTo('wishlist')} />
+    </CardImgOverlay>);
 
   const removeOverlay = onRemove && ((showConfirm &&
     <CardImgOverlay
@@ -64,6 +76,7 @@ const ArtisanCard = (props) => {
           alt={artisan.sculpt}
         />
         {processingOverlay}
+        {addOverlay}
         {removeOverlay}
         <CardBody>
           <CardTitle><b>{formatName(artisan)} </b></CardTitle>

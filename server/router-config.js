@@ -13,6 +13,11 @@ class RouterConfig {
     this.app.get(`/api${path}`, fn);
   }
 
+  async addUser(req) {
+    this.userProfile = await this.fetchUserProfile(req);
+    this.user = await User.findOrCreate(this.client, { email: this.userProfile.email });
+  }
+
   getAuth(path, fn) {
     this.app.get(`/api${path}`, this.jwtCheck, async (req, res, next) => {
       req.userProfile = await this.fetchUserProfile(req);
@@ -20,11 +25,16 @@ class RouterConfig {
     });
   }
 
+  async putAuth(path, fn) {
+    this.app.put(`/api${path}`, this.jwtCheck, async (req, res, next) => {
+      await this.addUser(req);
+      return fn(req, res, next);
+    });
+  }
+
   async deleteAuth(path, fn) {
     this.app.delete(`/api${path}`, this.jwtCheck, async (req, res, next) => {
-      this.userProfile = await this.fetchUserProfile(req);
-      this.user = await User.findOrCreate(this.client, { email: this.userProfile.email });
-
+      await this.addUser(req);
       return fn(req, res, next);
     });
   }
