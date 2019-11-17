@@ -7,7 +7,7 @@ const Home = (props) => {
   const { isAuthenticated } = useAuth0();
 
   if (isAuthenticated) {
-    props.history.push('/dashboard');
+    props.history.push('/artisans');
     return <div></div>;
   }
 

@@ -32,8 +32,8 @@ const NavBar = () => {
 
   const links = [
     { name: 'Home',        path: '/',             auth: false },
-    { name: 'Dashboard',   path: '/dashboard',    auth: true },
     { name: 'Artisans',    path: '/artisans',     auth: true },
+    { name: 'Catalogs',    path: '/catalogs',     auth: true },
     { name: 'My Artisans', path: '/my-artisans',  auth: true },
     { name: 'WishList',    path: '/wishlist',     auth: true },
     { name: 'Bot',         path: '/bot' },

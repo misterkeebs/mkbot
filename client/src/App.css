@@ -63,3 +63,7 @@
   opacity: 1;
   background-color: rgba(128, 255, 255, .5);
 }
+
+.mkb-makers .col {
+  text-align: center;
+}

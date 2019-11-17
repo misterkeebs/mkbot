@@ -4,7 +4,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const createOrm = require('./orm-base');
 
-module.exports = createOrm('email_confirmations', {
+const instanceAdditions = {
   sendEmail: async function() {
     console.log('Sending to', this.email);
     const email = {
@@ -36,4 +36,6 @@ module.exports = createOrm('email_confirmations', {
       return err;
     }
   }
-});
+};
+
+module.exports = createOrm('email_confirmations', { instanceAdditions});

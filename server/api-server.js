@@ -3,6 +3,7 @@ const jwks = require('jwks-rsa');
 
 const UserRoutes = require('./user');
 const ListRoutes = require('./list');
+const MakerRoutes = require('./makers');
 const ArtisanRoutes = require('./artisans');
 
 class ApiServer {
@@ -26,6 +27,7 @@ class ApiServer {
   addRoutes() {
     new UserRoutes(this).routes();
     new ListRoutes(this).routes();
+    new MakerRoutes(this).routes();
     new ArtisanRoutes(this).routes();
   }
 }

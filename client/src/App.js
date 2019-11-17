@@ -12,6 +12,8 @@ import history from "./utils/history";
 import Home from "./views/Home";
 import Bot from "./views/Bot";
 import Artisans from "./views/Artisans";
+import Catalogs from "./views/Catalogs";
+import Catalog from "./views/Catalog";
 import Dashboard from "./views/Dashboard";
 import Profile from "./views/Profile";
 import MyArtisans from "./views/MyArtisans";
@@ -39,8 +41,10 @@ const App = () => {
           <Switch>
             <Route path="/" exact component={Home} />
             <Route path="/bot" exact component={Bot} />
+            <Route path="/artisans" exact component={Artisans} />
+            <Route path="/catalogs/:slug" component={Catalog} />
+            <Route path="/catalogs" component={Catalogs} />
             <PrivateRoute path="/dashboard" exact component={Dashboard} />
-            <PrivateRoute path="/artisans" exact component={Artisans} />
             <PrivateRoute path="/my-artisans" exact component={MyArtisans} />
             <PrivateRoute path="/wishlist" exact component={WishList} />
             <PrivateRoute path="/profile" component={Profile} />

@@ -4,9 +4,18 @@ const inflex = require('pluralize');
 const Base = require('./base');
 const db = require('../db');
 
-module.exports = (table, additions={}) => {
+module.exports = (table, options={}) => {
+  const { classAdditions={}, instanceAdditions={} } = options;
+
   const pk = `${inflex.singular(table)}_id`;
   const orm = class Orm extends Base {
+    static async getAll(client, options={}) {
+      const { order, page, perPage } = options;
+      return await db.selectAll(client, {
+        table, order, page, perPage
+      });
+    }
+
     static async find(client, where) {
       const data = await db.select(client, { table, where });
       if (!data) return;
@@ -34,8 +43,12 @@ module.exports = (table, additions={}) => {
     }
   }
 
-  Object.keys(additions).forEach(key => {
-    orm.prototype[key] = additions[key];
+  Object.keys(classAdditions).forEach(key => {
+    orm[key] = classAdditions[key];
+  });
+
+  Object.keys(instanceAdditions).forEach(key => {
+    orm.prototype[key] = instanceAdditions[key];
   });
 
   return orm;
