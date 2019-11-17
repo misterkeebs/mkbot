@@ -30,28 +30,32 @@ const NavBar = () => {
       returnTo: window.location.origin
     });
 
+  const catalogIsActive = (match, location) => location.pathname.startsWith('/catalogs');
   const links = [
-    { name: 'Artisans',    path: '/artisans',                },
-    { name: 'Catalogs',    path: '/catalogs',                },
-    { name: 'My Artisans', path: '/my-artisans',  auth: true },
-    { name: 'WishList',    path: '/wishlist',     auth: true },
+    { name: 'Artisans',    path: '/artisans',                             },
+    { name: 'Catalogs',    path: '/catalogs',     active: catalogIsActive },
+    { name: 'My Artisans', path: '/my-artisans',  auth: true              },
+    { name: 'WishList',    path: '/wishlist',     auth: true              },
     { name: 'Bot',         path: '/bot' },
   ].filter(linkDef => {
     return !linkDef.hasOwnProperty('auth') ||
     (linkDef.auth === true && isAuthenticated) ||
     (linkDef.auth === false && !isAuthenticated)
-  }).map(linkDef =>
-    <NavItem key={`nv_${linkDef.name}`}>
+  }).map(linkDef => {
+    const exact = linkDef.exact !== false;
+    console.log('linkDef exact', linkDef, exact);
+    return <NavItem key={`nv_${linkDef.name}`}>
       <NavLink
         tag={RouterNavLink}
         to={linkDef.path}
-        exact
-        activeClassName="router-link-exact-active"
+        exact={exact}
+        isActive={linkDef.active}
+        activeClassName={`router-link-${exact === false ? '' : 'exact-'}active`}
       >
         {linkDef.name}
       </NavLink>
     </NavItem>
-  );
+  });
 
   return (
     <div className="nav-container">

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Container, Row, Col,
 } from 'reactstrap';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import slugify from 'slugify';
 
 import DataLoading from '../components/DataLoading';
@@ -32,9 +32,9 @@ const Catalogs = () => {
     return (
       <Row key={maker.maker_id}>
         <Col>
-          <Link to={`/catalogs/${maker.maker_id}-${slugify(maker.name)}`}>
+          <NavLink to={`/catalogs/${maker.maker_id}-${slugify(maker.name)}`}>
             {maker.name}
-          </Link>
+          </NavLink>
         </Col>
       </Row>
     );
