@@ -1,15 +1,12 @@
 import React from "react";
 import { withRouter } from 'react-router'
 
-import { useAuth0 } from "../react-auth0-spa";
+// import { useAuth0 } from "../react-auth0-spa";
 
 const Home = (props) => {
-  const { isAuthenticated } = useAuth0();
+  // const { isAuthenticated } = useAuth0();
 
-  if (isAuthenticated) {
-    props.history.push('/artisans');
-    return <div></div>;
-  }
+  props.history.push('/artisans');
 
   return (
     <div>Home</div>
