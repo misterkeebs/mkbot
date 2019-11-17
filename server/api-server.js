@@ -2,6 +2,7 @@ const jwt = require('express-jwt');
 const jwks = require('jwks-rsa');
 
 const UserRoutes = require('./user');
+const ListRoutes = require('./list');
 const ArtisanRoutes = require('./artisans');
 
 class ApiServer {
@@ -24,6 +25,7 @@ class ApiServer {
 
   addRoutes() {
     new UserRoutes(this).routes();
+    new ListRoutes(this).routes();
     new ArtisanRoutes(this).routes();
   }
 }

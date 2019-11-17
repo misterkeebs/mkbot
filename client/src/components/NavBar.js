@@ -30,6 +30,29 @@ const NavBar = () => {
       returnTo: window.location.origin
     });
 
+  const links = [
+    { name: 'Home',        path: '/',             auth: false },
+    { name: 'Artisans',    path: '/artisans',     auth: true },
+    { name: 'My Artisans', path: '/my-artisans',  auth: true },
+    { name: 'Withslit',    path: '/wishlist',       auth: true },
+    { name: 'Bot',         path: '/bot' },
+  ].filter(linkDef => {
+    return !linkDef.hasOwnProperty('auth') ||
+    (linkDef.auth === true && isAuthenticated) ||
+    (linkDef.auth === false && !isAuthenticated)
+  }).map(linkDef =>
+    <NavItem key={`nv_${linkDef.name}`}>
+      <NavLink
+        tag={RouterNavLink}
+        to={linkDef.path}
+        exact
+        activeClassName="router-link-exact-active"
+      >
+        {linkDef.name}
+      </NavLink>
+    </NavItem>
+  );
+
   return (
     <div className="nav-container">
       <Navbar color="light" light expand="md">
@@ -38,54 +61,7 @@ const NavBar = () => {
           <NavbarToggler onClick={toggle} />
           <Collapse isOpen={isOpen} navbar>
             <Nav className="mr-auto" navbar>
-              {!isAuthenticated && (
-                <NavItem>
-                  <NavLink
-                    tag={RouterNavLink}
-                    to="/"
-                    exact
-                    activeClassName="router-link-exact-active"
-                  >
-                    Home
-                  </NavLink>
-                </NavItem>
-              )}
-              {isAuthenticated && (
-                <NavItem>
-                  <NavLink
-                    tag={RouterNavLink}
-                    to="/dashboard"
-                    exact
-                    activeClassName="router-link-exact-active"
-                  >
-                    Dashboard
-                  </NavLink>
-                </NavItem>
-              )}
-              {isAuthenticated && (
-                <NavItem>
-                  <NavLink
-                    tag={RouterNavLink}
-                    to="/artisans"
-                    exact
-                    activeClassName="router-link-exact-active"
-                  >
-                    My Artisans
-                  </NavLink>
-                </NavItem>
-              )}
-              {isAuthenticated && (
-                <NavItem>
-                  <NavLink
-                    tag={RouterNavLink}
-                    to="/wishlist"
-                    exact
-                    activeClassName="router-link-exact-active"
-                  >
-                    Wish List
-                  </NavLink>
-                </NavItem>
-              )}
+              {links}
             </Nav>
             <Nav className="d-none d-md-block" navbar>
               {!isAuthenticated && (

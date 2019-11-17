@@ -2,7 +2,7 @@ const dedent = require('dedent');
 const _ = require('lodash');
 
 const { format } = require('./format');
-const { select, update } = require('../db');
+const db = require('../db');
 const { findPendingSubmission } = require('../database/utils');
 
 module.exports = async function(client, msg, content) {
@@ -11,7 +11,7 @@ module.exports = async function(client, msg, content) {
     return msg.reply(`Couldn't find a submission with id **${content}**`);
   }
 
-  const sub = await update(client, {
+  const sub = await db.update(client, {
     table: 'submissions',
     set: { status: 'rejected', processed_at: new Date() },
     where: 'submission_id = $1',

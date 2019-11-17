@@ -2,7 +2,6 @@ const dedent = require('dedent');
 const _ = require('lodash');
 
 function parseWhere(def) {
-  console.log(' *** def.where', def.where, _.isObject(def.where));
   if (!_.isArray(def.where) && _.isObject(def.where)) {
     const nullWheres = _.pickBy(def.where, _.isNull);
     def.where = _.pickBy(def.where, v => !_.isNull(v));
@@ -20,8 +19,8 @@ function parseWhere(def) {
   return { data, where };
 }
 
-module.exports = {
-  insert: (db, table, data) => {
+class DB {
+  insert(db, table, data) {
     const fields = Object.keys(data);
     const values = fields.map(f => data[f]);
     const indexes = fields.map((_, i) => `$${i+1}`);
@@ -35,9 +34,19 @@ module.exports = {
       console.log('res', res.rows);
       return res.rows[0];
     });
-  },
+  }
 
-  select: (db, options) => {
+  select(db, options) {
+    console.log(' *** this', this);
+    return this.selectAll(db, options).then(rows => {
+      if (rows.length < 2) {
+        return rows[0];
+      }
+      return rows;
+    });
+  }
+
+  selectAll(db, options) {
     const { fields, table, joins, order, page, perPage } = options;
     const { where, data } = parseWhere(options);
 
@@ -59,8 +68,8 @@ module.exports = {
     } else {
       sqlArr.push(`SELECT ${fieldList} FROM ${table}`);
     }
-    whereClause && sqlArr.push(whereClause);
     joinsClause && sqlArr.push(joinsClause);
+    whereClause && sqlArr.push(whereClause);
     orderClause && sqlArr.push(orderClause);
     if (options.perPage) {
       const limit = perPage;
@@ -71,15 +80,12 @@ module.exports = {
     const sql = _.flatten(sqlArr).join('');
     console.log('sql', sql, data);
     return db.query(sql, data).then(res => {
-      console.log('res', res.rows);
-      if (res.rows.length < 2) {
-        return res.rows[0];
-      }
+      console.log('res', res);
       return res.rows;
     });
-  },
+  }
 
-  update: (db, options) => {
+  update(db, options) {
     // fields, where, whereValues
     const { table, set, where, data } = options;
     const start = data.length + 1;
@@ -94,9 +100,9 @@ module.exports = {
     return db.query(sql, _.flatten(data)).then(res => {
       return res.rows[0];
     });
-  },
+  }
 
-  doDelete: (db, table, where) => {
+  doDelete(db, table, where) {
     const whereClause = Object.keys(where).map((k, i) => `${k} = $${i+1}`).join(' AND ');
     const values = Object.values(where);
     const sql = dedent`
@@ -106,3 +112,5 @@ module.exports = {
     return db.query(sql, values);
   }
 }
+
+module.exports = new DB();

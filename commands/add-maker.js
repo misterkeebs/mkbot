@@ -1,6 +1,6 @@
 const dedent = require('dedent');
 
-const { insert } = require('../db');
+const db = require('../db');
 const { findMaker } = require('../database/utils');
 
 module.exports = async function(client, msg, content) {
@@ -8,6 +8,6 @@ module.exports = async function(client, msg, content) {
   if (maker) {
     return msg.reply(`Maker **${content}** already exists.`);
   }
-  await insert(client, 'makers', { name: content });
+  await db.insert(client, 'makers', { name: content });
   return msg.reply(`Make **${content}** was successfully added.`);
 }

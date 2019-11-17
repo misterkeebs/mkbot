@@ -21,6 +21,7 @@ class UserRoutes extends RouterConfig {
     const { userProfile } = req;
     const user = await User.findOrCreate(this.client, { email: userProfile.email });
     const list = await List.findByUser(this.client, type, user.discord_user_id);
+    console.log(' *** list', list);
     if (!list) {
       return res.json(null);
     }

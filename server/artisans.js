@@ -9,9 +9,11 @@ class ArtisanRoutes extends RouterConfig {
   }
 
   async getArtisans(req, res, next) {
-    const { page=1, perPage=50 } = req.query;
-    const result = await Artisan.getAll(this.client, { page, perPage });
-    const count = result[0].full_count;
+    const { page=1, perPage=30, q } = req.query;
+    const result =
+      await Artisan.getAll(this.client, { page, perPage, terms: q }) || [];
+    const count = result[0] ? result[0].full_count : 0;
+    console.log(' *** result', result);
     const artisans = result.map(a => _.omit(a, 'full_count'));
     res
       .header('X-Pagination-Page', page)

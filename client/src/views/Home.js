@@ -1,10 +1,7 @@
-import React, { Fragment } from 'react';
+import React from "react";
 import { withRouter } from 'react-router'
 
 import { useAuth0 } from "../react-auth0-spa";
-
-import Hero from "../components/Hero";
-import Content from "../components/Content";
 
 const Home = (props) => {
   const { isAuthenticated } = useAuth0();
@@ -15,12 +12,8 @@ const Home = (props) => {
   }
 
   return (
-    <Fragment>
-      <Hero />
-      <hr />
-      <Content />
-    </Fragment>
+    <div>Home</div>
   );
-}
+};
 
 export default withRouter(Home);

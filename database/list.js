@@ -1,5 +1,5 @@
 const Base = require('./base');
-const { select, insert } = require('../db');
+const db = require('../db');
 const ListImage = require('../commands/list-image');
 
 class List extends Base {
@@ -16,8 +16,7 @@ class List extends Base {
   }
 
   static async findByUser(client, type, user_id) {
-    console.log('client', client);
-    const data = await select(client, {
+    const data = await db.select(client, {
       table: 'lists',
       where: ['user_id = $1', 'type = $2'],
       data: [user_id, type]
@@ -27,7 +26,7 @@ class List extends Base {
   }
 
   static async create(client, type, user_id) {
-    const data = await insert(client, 'lists', { user_id, type });
+    const data = await db.insert(client, 'lists', { user_id, type });
     return new List(client, type, data);
   }
 

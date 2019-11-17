@@ -2,19 +2,19 @@ const _ = require('lodash');
 const inflex = require('pluralize');
 
 const Base = require('./base');
-const { insert, select } = require('../db');
+const db = require('../db');
 
 module.exports = (table, additions={}) => {
   const pk = `${inflex.singular(table)}_id`;
   const orm = class Orm extends Base {
     static async find(client, where) {
-      const data = await select(client, { table, where });
+      const data = await db.select(client, { table, where });
       if (!data) return;
       return new orm(client, data);
     };
 
     static async create(client, data) {
-      const insertedData = await insert(client, table, data);
+      const insertedData = await db.insert(client, table, data);
       return new orm(client, insertedData);
     };
 

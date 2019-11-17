@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const dedent = require('dedent');
 const _ = require('lodash');
 
-const { insert } = require('./db');
+const db = require('./db');
 
 function sendHelp(msg, options={}) {
   const extra = `${options.error ? `Error: **${options.error}**\n\n` : ``}${options.warn  ? `${options.warn}\n\n` : ``}`;
@@ -59,7 +59,7 @@ module.exports = async function(client, msg) {
       data.user_id = _.get(msg, 'author.id');
       data.status = 'submitted';
       data.image = atts[0].url;
-      const res = await insert(client, 'submissions', data);
+      const res = await db.insert(client, 'submissions', data);
       const id = res.submission_id;
 
       msg.reply(dedent`

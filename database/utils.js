@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const { select } = require('../db');
+const db = require('../db');
 
 module.exports = {
   findMaker: (client, term) => {
@@ -13,7 +13,7 @@ module.exports = {
   },
 
   findPendingSubmission: async (client, id) => {
-    return await select(client, {
+    return await db.select(client, {
       table: 'submissions',
       where: ['submission_id = $1', 'processed_at IS null'],
       data: [id]

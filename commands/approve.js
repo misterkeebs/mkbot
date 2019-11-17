@@ -2,11 +2,11 @@ const dedent = require('dedent');
 const _ = require('lodash');
 
 const { format, card } = require('./format');
-const { select, insert, update } = require('../db');
+const db = require('../db');
 const { findMaker } = require('../database/utils');
 
 module.exports = async function(client, msg, content) {
-  const data = await select(client, {
+  const data = await db.select(client, {
     table: 'submissions',
     where: 'submission_id = $1',
     data: [content]
@@ -35,10 +35,10 @@ module.exports = async function(client, msg, content) {
   insertData.submitted_by = data.user;
   insertData.submitted_at = data.created_at;
 
-  const artisan = await insert(client, 'artisans', insertData);
+  const artisan = await db.insert(client, 'artisans', insertData);
   artisan.maker = maker.name;
 
-  const sub = await update(client, {
+  const sub = await db.update(client, {
     table: 'submissions',
     set: { status: 'approved', processed_at: new Date() },
     where: 'submission_id = $1',

@@ -1,10 +1,10 @@
 const Base = require('./base');
-const { insert, select, update } = require('../db');
+const db = require('../db');
 const User = require('./user');
 
 class Server extends Base {
   static async find(client, discord_guild_id) {
-    const data = await select(client, {
+    const data = await db.select(client, {
       table: 'servers',
       where: 'server_id = $1',
       data: [discord_guild_id],
@@ -21,7 +21,7 @@ class Server extends Base {
   }
 
   static async create(client, server_id) {
-    const data = await insert(client, 'servers', { server_id });
+    const data = await db.insert(client, 'servers', { server_id });
     return new Server(client, data);
   }
 

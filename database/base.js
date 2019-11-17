@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const { select, insert, update, doDelete } = require('../db');
+const db = require('../db');
 
 class Base {
   constructor(client, data={}) {
@@ -22,19 +22,19 @@ class Base {
   }
 
   select(options) {
-    return select(this.client, options);
+    return db.select(this.client, options);
   }
 
   insert(table, options) {
-    return insert(this.client, table, options);
+    return db.insert(this.client, table, options);
   }
 
   delete(table, where) {
-    return doDelete(this.client, table, where);
+    return db.doDelete(this.client, table, where);
   }
 
   update(options) {
-    return update(this.client, options);
+    return db.update(this.client, options);
   }
 
   async save(pk) {

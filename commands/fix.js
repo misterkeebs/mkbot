@@ -1,6 +1,6 @@
 const dedent = require('dedent');
 
-const { select, update } = require('../db');
+const db = require('../db');
 
 const FIELDS = ['collection', 'sculpt', 'colorway', 'name', 'maker'];
 
@@ -20,7 +20,7 @@ module.exports = async function(client, msg, content) {
     data: [id],
   };
 
-  const res = await select(client, options);
+  const res = await db.select(client, options);
 
   if (res.total < 1) {
     return msg.reply(`Submission ${id} not found.`);
@@ -32,7 +32,7 @@ module.exports = async function(client, msg, content) {
     );
   }
 
-  const resUp = await update(client, {
+  const resUp = await db.update(client, {
     table: 'submissions',
     set: { [field]: value },
     where: 'submission_id = $1',

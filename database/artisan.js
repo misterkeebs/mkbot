@@ -1,6 +1,6 @@
 const Base = require('./base');
 
-const { select } = require('../db');
+const db = require('../db');
 const table = 'artisan';
 
 class Artisan extends Base {
@@ -9,7 +9,16 @@ class Artisan extends Base {
     const fields = 'a.artisan_id, m.name AS maker, a.sculpt, a.colorway, a.image';
     const table = 'artisans a';
     const joins = ['makers m ON m.maker_id = a.maker_id'];
-    return select(client, { fields, table, order, joins, page, perPage });
+    const where = options.terms
+      ? [
+          `CONCAT(a.collection, ' ', a.sculpt, ' ', a.colorway) ILIKE $1
+           OR CONCAT(a.colorway, ' ', a.colorway) ILIKE $1`
+      ] : null;
+    const data = options.terms ? [`%${options.terms}%`] : null;
+    const results = await db.selectAll(client, {
+      fields, table, order, joins, page, perPage, where, data
+    });
+    return results;
   }
 
   static async search(client, _term) {

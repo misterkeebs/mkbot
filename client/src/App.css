@@ -29,3 +29,37 @@
   left: 0;
   right: 0;
 }
+
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: .5s ease;
+  background-color: #008CBA;
+}
+
+.mkb-artisan-card {
+  min-width: 200px;
+  margin-bottom: 15px;
+}
+
+.mkb-artisan-card .card-img-overlay {
+  background: none;
+  opacity: 0;
+  transition: 0.4s;
+}
+
+.mkb-artisan-card .card-img-overlay:hover {
+  opacity: 1;
+  background-color: rgba(128, 255, 255, .5);
+}
+
+.mkb-artisan-card .card-img-overlay.processing {
+  opacity: 1;
+  background-color: rgba(128, 255, 255, .5);
+}

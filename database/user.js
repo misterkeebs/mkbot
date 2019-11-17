@@ -1,11 +1,11 @@
 const Discord = require('discord.js');
 
 const Base = require('./base');
-const { insert, select } = require('../db');
+const db = require('../db');
 
 class User extends Base {
   static async findUserRole(client, user_id) {
-    const data = await select(client, {
+    const data = await db.select(client, {
       table: 'users',
       where: ['user_id = $1'],
       data: [user_id],
@@ -15,7 +15,7 @@ class User extends Base {
   }
 
   static async find(client, fields) {
-    const data = await select(client, {
+    const data = await db.select(client, {
       table: 'users',
       where: fields,
     });
@@ -24,7 +24,7 @@ class User extends Base {
   }
 
   static async create(client, fields) {
-    const data = await insert(client, 'users', fields);
+    const data = await db.insert(client, 'users', fields);
     return new User(client, data);
   }
 

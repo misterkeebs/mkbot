@@ -1,6 +1,6 @@
 import React from "react";
 
-import ArtisanList from "../components/ArtisanList";
+import ArtisanList from "./ArtisanList";
 
 const WishList = () => {
   return <ArtisanList listType="wishlist" />;
