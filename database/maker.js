@@ -9,6 +9,17 @@ const classAdditions = {
     ORDER BY count DESC
     `;
     return await client.query(sql);
+  },
+
+  getSculpts: async (client, maker_id) => {
+    const sql = `
+    SELECT sculpt, count(*) AS count
+    FROM artisans
+    WHERE maker_id = $1
+    GROUP BY sculpt
+    ORDER BY sculpt
+    `;
+    return await client.query(sql, [maker_id]);
   }
 };
 module.exports = createOrm('makers', { classAdditions });

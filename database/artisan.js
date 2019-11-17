@@ -9,7 +9,7 @@ class Artisan extends Base {
       order='maker, sculpt, colorway',
       page=1, perPage,
       where=[],
-      data=[]
+      data=[],
     } = options;
     const fields = 'a.artisan_id, m.name AS maker, a.sculpt, a.colorway, a.image';
     const table = 'artisans a';
