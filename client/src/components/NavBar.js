@@ -32,9 +32,10 @@ const NavBar = () => {
 
   const links = [
     { name: 'Home',        path: '/',             auth: false },
+    { name: 'Dashboard',   path: '/dashboard',    auth: true },
     { name: 'Artisans',    path: '/artisans',     auth: true },
     { name: 'My Artisans', path: '/my-artisans',  auth: true },
-    { name: 'Withslit',    path: '/wishlist',       auth: true },
+    { name: 'WishList',    path: '/wishlist',     auth: true },
     { name: 'Bot',         path: '/bot' },
   ].filter(linkDef => {
     return !linkDef.hasOwnProperty('auth') ||
