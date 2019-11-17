@@ -16,7 +16,7 @@ class MakerRoutes extends RouterConfig {
   }
 
   async getMakerArtisans(req, res, next) {
-    const { page=1, perPage=30 } = req.query;
+    const { page=1, perPage=32 } = req.query;
     const { maker_id } = req.params;
     const result =
       await Artisan.getAll(this.client, {

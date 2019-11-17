@@ -9,7 +9,7 @@ class ArtisanRoutes extends RouterConfig {
   }
 
   async getArtisans(req, res, next) {
-    const { page=1, perPage=30, q } = req.query;
+    const { page=1, perPage=32, q } = req.query;
     const result =
       await Artisan.getAll(this.client, { page, perPage, terms: q }) || [];
     const count = result[0] ? result[0].full_count : 0;
