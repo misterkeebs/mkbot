@@ -8,6 +8,7 @@ import {
   faTrashAlt, faTimes, faCheck, faListAlt, faHeart,
 } from '@fortawesome/free-solid-svg-icons'
 
+import { useAuth0 } from "../react-auth0-spa";
 import DataLoading from './DataLoading';
 
 function formatName(data) {
@@ -19,6 +20,7 @@ const ArtisanCard = (props) => {
   const [showIcons, setShowIcons] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const { artisan, onRemove, onAdd, processing } = props;
+  const { isAuthenticated } = useAuth0();
 
   const cancel = () => {
     setShowConfirm(false);
@@ -76,8 +78,8 @@ const ArtisanCard = (props) => {
           alt={artisan.sculpt}
         />
         {processingOverlay}
-        {addOverlay}
-        {removeOverlay}
+        {isAuthenticated && addOverlay}
+        {isAuthenticated && removeOverlay}
         <CardBody>
           <CardTitle><b>{formatName(artisan)} </b></CardTitle>
           <CardSubtitle>{artisan.maker}</CardSubtitle>

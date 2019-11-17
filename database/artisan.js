@@ -7,7 +7,7 @@ class Artisan extends Base {
   static async getAll(client, options) {
     const {
       order='maker, sculpt, colorway',
-      page=1, perPage,
+      page=1, perPage=30,
       where=[],
       data=[],
     } = options;

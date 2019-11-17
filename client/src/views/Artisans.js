@@ -10,9 +10,16 @@ import { useAuth0 } from '../react-auth0-spa';
 import DataLoading from '../components/DataLoading';
 import ArtisanList from '../components/ArtisanList';
 
-const search = async (terms) => {
-  const response = await fetch(`/api/artisans/?q=${terms}`);
-  return response.json();
+const search = async (terms, page=1) => {
+  const response = await fetch(`/api/artisans/?q=${terms}&page=${page}`);
+  const artisans = await response.json();
+  const headers = response.headers;
+  return {
+    artisans,
+    page: headers.get('X-Pagination-Page'),
+    pages: headers.get('X-Pagination-TotalPages'),
+    pageSize: headers.get('X-Pagination-PerPage'),
+  };
 };
 
 const addArtisan = async (token, listType, artisan_id) => {
@@ -28,25 +35,38 @@ const Artisans = () => {
   const { getTokenSilently } = useAuth0();
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [results, setResults] = useState([]);
+  const [artisans, setArtisans] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(null);
   const [loading, setLoading] = useState(false);
   const [processing, setProcessing] = useState(null);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
+  const searchByTerm = async (term, page) => {
+    const { artisans, pages } = await search(debouncedSearchTerm, page);
+    setArtisans(artisans);
+    setPage(page);
+    setPages(pages);
+    setLoading(false);
+  };
+
   useEffect(
     () => {
       if (debouncedSearchTerm) {
         setLoading(true);
-        search(debouncedSearchTerm).then(results => {
-          setResults(results);
+        search(debouncedSearchTerm, page).then(res => {
+          const { artisans, pages } = res;
+          setArtisans(artisans);
+          setPage(page);
+          setPages(pages);
           setLoading(false);
         });
       } else {
-        setResults([]);
+        setArtisans([]);
       }
     },
-    [debouncedSearchTerm]
+    [debouncedSearchTerm, page]
   );
 
   const add = async (list, artisan) => {
@@ -57,22 +77,30 @@ const Artisans = () => {
     setProcessing(null);
   };
 
+  const onPageChange = (newPage) => {
+    searchByTerm(debouncedSearchTerm, newPage);
+  };
+
   const result = loading
     ? <DataLoading />
     : (debouncedSearchTerm
         ? <ArtisanList
-            artisans={results}
+            artisans={artisans}
             onAdd={add}
             processing={processing}
             searchTerm={debouncedSearchTerm}
+            pages={pages}
+            page={page}
+            perRow={4}
+            onPageChange={onPageChange}
           />
         : <div></div>
       );
 
-  const summary = (debouncedSearchTerm && results && results.length)
+  const summary = (debouncedSearchTerm && artisans && artisans.length)
     ? (
       <Row>
-        <Col>Showing <b>{results.length}</b> matches for <b>{debouncedSearchTerm}</b></Col>
+        <Col>Showing <b>{artisans.length}</b> matches for <b>{debouncedSearchTerm}</b></Col>
       </Row>
     ) : null;
 

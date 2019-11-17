@@ -14,9 +14,16 @@ const getSculpts = async (maker_id) => {
   return response.json();
 };
 
-const getArtisans = async (maker_id, sculpt) => {
-  const response = await fetch(`/api/makers/${maker_id}/artisans?sculpt=${sculpt}`);
-  return response.json();
+const getArtisans = async (maker_id, sculpt, page=1) => {
+  const response = await fetch(`/api/makers/${maker_id}/artisans?sculpt=${sculpt}&page=${page}`);
+  const artisans = await response.json();
+  const headers = response.headers;
+  return {
+    artisans,
+    page: headers.get('X-Pagination-Page'),
+    pages: headers.get('X-Pagination-TotalPages'),
+    pageSize: headers.get('X-Pagination-PerPage'),
+  };
 };
 
 const Catalog = () => {
@@ -24,7 +31,11 @@ const Catalog = () => {
   const [sculptsLoading, setSculptsLoading] = useState(true);
   const [artisansLoading, setArtisansLoading] = useState(false);
   const [sculpts, setSculpts] = useState([]);
+  const [sculpt, setSculpt] = useState(null);
   const [artisans, setArtisans] = useState([]);
+  const [page, setPage] = useState(null);
+  const [pages, setPages] = useState(null);
+  const [pageSize, setPageSize] = useState(null);
   const maker_id = slug.split('-')[0];
 
   useEffect(() => {
@@ -36,11 +47,15 @@ const Catalog = () => {
     })
   }, [maker_id]);
 
-  const loadSculpt = async (sculpt) => {
+  const loadSculpt = async (sculpt, page=1) => {
     setArtisansLoading(true);
-    const artisans = await getArtisans(maker_id, sculpt);
-    console.log('artisans', artisans);
+    const { artisans, pages, pageSize } = await getArtisans(maker_id, sculpt, page);
+    console.log('artisans', { artisans, page, pages });
+    setSculpt(sculpt);
     setArtisans(artisans);
+    setPage(page);
+    setPages(pages);
+    setPageSize(pageSize);
     setArtisansLoading(false);
   }
 
@@ -58,9 +73,19 @@ const Catalog = () => {
       </Nav>
     );
 
+  const onPageChange = (newPage) => {
+    loadSculpt(sculpt, newPage);
+  };
+
   const artisansEl = artisansLoading
     ? <DataLoading />
-    : <ArtisanList artisans={artisans} />;
+    : <ArtisanList
+        artisans={artisans}
+        pages={pages}
+        page={page}
+        pageSize={pageSize}
+        onPageChange={onPageChange}
+      />;
 
   return (
     <Container>
