@@ -80,7 +80,7 @@ const ArtisanList = (props) => {
     </Row>
   );
 
-  const artisanCard = (a) => !!a
+  const artisanCard = (a, i) => !!a
     ? <ArtisanCard
       key={a.artisan_id}
       onRemove={onRemove}
@@ -88,7 +88,7 @@ const ArtisanList = (props) => {
       artisan={a}
       processing={a.artisan_id === processing}
     />
-    : <Col></Col>;
+    : <Col key={i}></Col>;
 
   return (
     <Container>

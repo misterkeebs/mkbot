@@ -39,6 +39,13 @@ class RouterConfig {
     });
   }
 
+  async postAuth(path, fn) {
+    this.app.post(`/api${path}`, this.jwtCheck, async (req, res, next) => {
+      await this.addUser(req);
+      return fn(req, res, next);
+    });
+  }
+
   async deleteAuth(path, fn) {
     this.app.delete(`/api${path}`, this.jwtCheck, async (req, res, next) => {
       await this.addUser(req);

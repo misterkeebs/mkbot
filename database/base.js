@@ -1,20 +1,25 @@
 const _ = require('lodash');
+const inflex = require('pluralize');
 
 const db = require('../db');
 
 class Base {
-  constructor(client, data={}) {
+  constructor(client, data={}, options={}) {
     this.client = client;
+    this.readOnlyFields = options.readOnlyFields || [];
     Object.keys(data).forEach(k => {
       this[k] = data[k];
     });
   }
 
   toJSON() {
-    return _.chain(this)
-      .omit('client')
-      .omitBy(_.isFunction)
-      .value();
+    const res =  _.chain(this)
+        .omitBy(_.isFunction)
+        .merge(_.pick(this, this.readOnlyFields))
+        .omit(['client', 'prototype', 'length', 'readOnlyFields'])
+        .value();
+    console.log(' *** JSON this', res);
+    return res;
   }
 
   query(sql, data) {
@@ -37,8 +42,10 @@ class Base {
     return db.update(this.client, options);
   }
 
-  async save(pk) {
-    const set = this.toJSON();
+  async save(table, pk = `${inflex.singular(table)}_id`) {
+    console.log(' *** this.public', this.public);
+    const set = _.omit(this.toJSON(), this.readOnlyFields);
+    console.log(' *** set', set);
     const where = `${pk} = $1`;
     return await this.update({ table, set, where, data: [this[pk]] });
   }

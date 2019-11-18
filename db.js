@@ -89,7 +89,7 @@ class DB {
     // fields, where, whereValues
     const { table, set, where, data } = options;
     const start = data.length + 1;
-    const fieldSets = Object.keys(set).map((k, i) => `${k} = $${i+start}`).join(', ');
+    const fieldSets = Object.keys(set).map((k, i) => `"${k}" = $${i+start}`).join(', ');
     data.push(Object.values(set));
     const sql = `
     UPDATE ${table} SET ${fieldSets} WHERE ${where}

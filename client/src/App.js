@@ -19,6 +19,7 @@ import Dashboard from './views/Dashboard';
 import Submission from './views/Submission';
 import Profile from './views/Profile';
 import MyArtisans from './views/MyArtisans';
+import PublicList from './views/PublicList';
 
 // styles
 import './App.css';
@@ -52,6 +53,7 @@ const App = () => {
             <PrivateRoute path="/my-artisans" exact component={MyArtisans} />
             <PrivateRoute path="/wishlist" exact component={WishList} />
             <PrivateRoute path="/profile" component={Profile} />
+            <Route path="/u/:slug/:listType" component={PublicList} />
           </Switch>
         </Container>
         <Footer />

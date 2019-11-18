@@ -1,11 +1,20 @@
 const Base = require('./base');
 const db = require('../db');
 const ListImage = require('../commands/list-image');
+const table = 'lists';
 
 class List extends Base {
-  constructor(client, type, data={}) {
-    super(client, data);
-    this.type = type;
+  constructor(client, data={}) {
+    super(client, data, { readOnlyFields: ['url_prefix'] });
+    this.type = data.type;
+  }
+
+  get url_prefix() {
+    return `${process.env.BASE_URL}/u`;
+  }
+
+  toJSON() {
+    return super.toJSON(['url_prefix']);
   }
 
   static async findOrCreate(client, type, user_id) {
@@ -22,12 +31,12 @@ class List extends Base {
       data: [user_id, type]
     });
     if (!data) return;
-    return new List(client, type, data);
+    return new List(client, data);
   }
 
   static async create(client, type, user_id) {
     const data = await db.insert(client, 'lists', { user_id, type });
-    return new List(client, type, data);
+    return new List(client, data);
   }
 
   async add(artisan) {
@@ -57,6 +66,10 @@ class List extends Base {
     return this.query(sql, [this.list_id]).then(res => {
       return res.rows;
     });
+  }
+
+  async save() {
+    return await super.save('lists');
   }
 
   async toImage() {
