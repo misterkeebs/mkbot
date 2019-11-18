@@ -3,7 +3,7 @@ const dedent = require('dedent');
 const _ = require('lodash');
 
 const Base = require('./base');
-const { Artisan, List } = require('../database/index');
+const { Artisan, List, User } = require('../database/index');
 const { card, format, formatMatches } = require('./format');
 
 const SUBCOMMANDS = {
@@ -33,7 +33,8 @@ class ListCommand extends Base {
 
   async getList() {
     const { author } = this.msg;
-    const list = await List.findByUser(this.client, this.type, author.id);
+    const user = await User.findOrCreate(this.client, { discord_user_id: author.id });
+    const list = await List.findByUser(this.client, this.type, user.user_id);
     if (!list) {
       await this.reply(
         `You don't currently have a ${this.type}. To create one use \`!${this.type} add [artisan partial name]\`.`);
