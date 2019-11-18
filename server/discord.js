@@ -36,7 +36,7 @@ class DiscordRoutes {
     const url = `${process.env.BASE_URL}${req.path}`;
     const image = artisans.length && artisans[0].image;
     const listType = type.charAt(0).toUpperCase() + type.substring(1);
-    const description = `Artisan ${listType} for ${nickname} containing: ${artisans.map(a => `${a.maker} ${a.sculpt} ${a.colorway}`)}`;
+    const description = `Artisan ${listType} for ${nickname} containing: ${artisans.map(a => `${a.sculpt} ${a.colorway}`).join(', ')}`;
     const content = `${nickname}'s Artisans ${listType} - MrKeebs Artisans`
 
     res.send(dedent`
