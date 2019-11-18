@@ -30,13 +30,14 @@ const NavBar = () => {
       returnTo: window.location.origin
     });
 
-  const catalogIsActive = (match, location) => location.pathname.startsWith('/catalogs');
+  const artisansIsActive = (match, location) =>
+    location.pathname.startsWith('/artisans') ||
+    location.pathname.startsWith('/catalogs')
   const links = [
-    { name: 'Artisans',    path: '/artisans',                             },
-    { name: 'Catalogs',    path: '/catalogs',     active: catalogIsActive },
-    { name: 'My Artisans', path: '/my-artisans',  auth: true              },
-    { name: 'Wishlist',    path: '/wishlist',     auth: true              },
-    { name: 'Submit',      path: '/submit',       auth: true              },
+    { name: 'Artisans',    path: '/artisans',     active: artisansIsActive },
+    { name: 'My Artisans', path: '/my-artisans',  auth: true               },
+    { name: 'Wishlist',    path: '/wishlist',     auth: true               },
+    { name: 'Submit',      path: '/submit',       auth: true               },
     { name: 'Bot',         path: '/bot' },
   ].filter(linkDef => {
     return !linkDef.hasOwnProperty('auth') ||

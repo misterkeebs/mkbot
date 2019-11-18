@@ -3,9 +3,9 @@ import {
   Container, Row, Col,
   FormGroup, Label, Input,
 } from 'reactstrap';
+import { NavLink } from 'react-router-dom';
 import { useDebounce } from 'use-lodash-debounce'
-
-import { useAuth0 } from '../react-auth0-spa';
+import slugify from 'slugify';
 
 import DataLoading from '../components/DataLoading';
 import ArtisanList from '../components/ArtisanList';
@@ -22,14 +22,18 @@ const search = async (terms, page=1) => {
   };
 };
 
-const Artisans = () => {
-  const { getTokenSilently } = useAuth0();
+const getMakers = async () => {
+  const response = await fetch(`/api/makers`);
+  return response.json();
+};
 
+const Artisans = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [artisans, setArtisans] = useState([]);
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [makers, setMakers] = useState([]);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
@@ -43,18 +47,23 @@ const Artisans = () => {
 
   useEffect(
     () => {
-      if (debouncedSearchTerm) {
-        setLoading(true);
-        search(debouncedSearchTerm, page).then(res => {
-          const { artisans, pages } = res;
-          setArtisans(artisans);
-          setPage(page);
-          setPages(pages);
+      setLoading(true);
+      getMakers().then(makers => {
+        setMakers(makers);
+
+        if (debouncedSearchTerm) {
+          search(debouncedSearchTerm, page).then(res => {
+            const { artisans, pages } = res;
+            setArtisans(artisans);
+            setPage(page);
+            setPages(pages);
+            setLoading(false);
+          });
+        } else {
+          setArtisans([]);
           setLoading(false);
-        });
-      } else {
-        setArtisans([]);
-      }
+        }
+      })
     },
     [debouncedSearchTerm, page]
   );
@@ -84,6 +93,20 @@ const Artisans = () => {
       </Row>
     ) : null;
 
+  const makersEl = !debouncedSearchTerm && (
+    <Container className="mkb-makers">
+      {makers.map(maker => (
+        <Row key={maker.maker_id}>
+          <Col>
+            <NavLink to={`/catalogs/${maker.maker_id}-${slugify(maker.name)}`}>
+              {maker.name}
+            </NavLink>
+          </Col>
+        </Row>
+      ))}
+    </Container>
+  );
+
   return (
     <>
       <Container>
@@ -104,6 +127,7 @@ const Artisans = () => {
         </Row>
         {summary}
       </Container>
+      {makersEl}
       {result}
     </>
   );
