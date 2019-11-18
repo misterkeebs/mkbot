@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
   Container, Row, Col,
-  ListGroup, ListGroupItem,
-  Button,
 } from 'reactstrap';
 import _ from 'lodash';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -167,6 +165,7 @@ const ArtisanList = (props) => {
             artisans={artisans}
             onRemove={remove}
             processing={processing}
+            perRow={props.perRow}
           />
         </Col>
       </Row>
