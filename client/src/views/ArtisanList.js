@@ -136,7 +136,7 @@ const ArtisanList = (props) => {
             <div>
               This artisan list is currently public
               at <a href={url}>{url}</a> <FontAwesomeIcon icon={faCopy} color="#ccc" />
-              <span class="mkb-list-action-copied">{copied && ' copied!'}</span>
+              <span className="mkb-list-action-copied">{copied && ' copied!'}</span>
             </div>
           </CopyToClipboard>
         : <div>This artisan list is currently private.</div>;
