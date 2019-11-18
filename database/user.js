@@ -41,7 +41,7 @@ class User extends Base {
   }
 
   async save() {
-    return await this.save('user_id');
+    return await super.save('user_id');
   }
 
   async sendPrivateMessage(text) {

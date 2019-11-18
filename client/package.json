@@ -26,9 +26,7 @@
     "reactstrap": "^8.0.0",
     "use-lodash-debounce": "^1.1.0"
   },
-  "devDependencies": {
-    "@fortawesome/fontawesome-pro": "^5.11.2"
-  },
+  "devDependencies": {},
   "eslintConfig": {
     "extends": "react-app"
   },

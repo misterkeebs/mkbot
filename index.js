@@ -71,6 +71,8 @@ bot.on('message', async msg => {
     await module(client, msg, params);
   } catch (err) {
     console.error('Error on', cmdKey, err, msg);
+    msg.channel.stopTyping();
+    msg.reply(`We're sorry, but there was an error processing your last message:\n\`${err}\`\n`);
   } finally {
     msg.channel.stopTyping();
   }

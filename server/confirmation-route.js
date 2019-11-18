@@ -8,11 +8,11 @@ class ConfirmationRoute {
   }
 
   addRoutes() {
-    this.app.get('/confirm/:token', async (req, res, next) => {
+    this.app.get('/api/confirm/:token', async (req, res, next) => {
       const { token } = req.params;
       const conf = await EmailConfirmation.find(this.client, { token, confirmed_at: null });
       if (!conf) {
-        return res.redirect('/?msg=bad+confirmation');
+        return res.redirect('/artisans?msg=bad+confirmation');
       }
 
       const { discord_user_id, email } = conf;
@@ -27,9 +27,9 @@ class ConfirmationRoute {
       conf.confirmed_at = new Date();
       await conf.save();
 
-      await user.sendPrivateMessage(`Your email **${email}** is now confirmed!`);
+      user.sendPrivateMessage(`Your email **${email}** is now confirmed!`);
 
-      res.redirect('/?msg=Your+email+is+now+confirmed!');
+      return res.redirect('/artisans?msg=Your+email+is+now+confirmed!');
     });
   }
 }

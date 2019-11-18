@@ -19,7 +19,7 @@ const instanceAdditions = {
 
       If this request was made by you, please click here to confirm:
 
-      ${process.env.BASE_URL}/confirm/${this.token}
+      ${process.env.BASE_URL}/api/confirm/${this.token}
 
       If you didn't request this, please ignore this email.
 

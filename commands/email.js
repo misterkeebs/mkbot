@@ -9,12 +9,21 @@ class EmailCommand extends Base {
     if (!email) return;
 
     const discord_user_id = this.user.id;
-    if (await EmailConfirmation.find(this.client, { discord_user_id })) {
-      return this.reply(`You already have a confirmation pending, to receive it again use \`!email resend\``);
+    let conf;
+    if (email === 'resend') {
+      conf = await EmailConfirmation.find(this.client, { discord_user_id });
+      if (!conf) {
+        return this.reply(`You don't have any pending confirmations. Use \`!email [email]\` to confirm your email.`);
+      }
+    } else {
+      if (conf) {
+        return this.reply(`You already have a confirmation pending, to receive it again use \`!email resend\``);
+      }
+
+      const token = uuidv3(`${email}-${new Date()}`, process.env.APP_KEY);
+      conf = await EmailConfirmation.create(this.client, { email, discord_user_id, token })
     }
 
-    const token = uuidv3(email, process.env.APP_KEY);
-    const conf = await EmailConfirmation.create(this.client, { email, discord_user_id, token })
     const err = await conf.sendEmail();
 
     if (err) {
