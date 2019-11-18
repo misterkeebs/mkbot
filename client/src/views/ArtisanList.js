@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   Container, Row, Col,
   ListGroup, ListGroupItem,
@@ -48,11 +49,12 @@ const removeArtisan = async (token, listType, artisan_id) => {
 
 const ArtisanList = (props) => {
   const { listType, userId } = props;
+  const history = useHistory();
   const useAuth = useAuth0();
   let authLoading = false;
   let user, getTokenSilently;
 
-  if (userId) {
+  if (!userId) {
     authLoading = useAuth.loading;
     user = useAuth.user;
     getTokenSilently = useAuth.getTokenSilently;
@@ -73,11 +75,14 @@ const ArtisanList = (props) => {
 
     result.then(({ list, artisans }) => {
       console.log('list, artisans', list, artisans);
+      if (userId && !list) {
+        history.push('/artisans?msg=List+not+found');
+      }
       setList(list);
       setArtisans(artisans);
       setLoading(false);
     });
-  }, [getTokenSilently, listType, userId]);
+  }, [getTokenSilently, listType, userId, history]);
 
   if (authLoading || (!user && !userId)) {
     return <Loading />;

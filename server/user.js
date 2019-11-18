@@ -28,7 +28,7 @@ class UserRoutes extends RouterConfig {
     const list = await List.findByUser(this.client, type, user.user_id);
     console.log(' *** list', list);
     if (!list) {
-      return res.json(null);
+      return res.json({ list: null, artisans: null });
     }
     const artisans = await list.getArtisans();
     res.json({ list, artisans });
@@ -38,7 +38,7 @@ class UserRoutes extends RouterConfig {
     const { user_id, type } = req.params;
     const list = await List.findByUser(this.client, type, user_id);
     if (!list || !list.public) {
-      res.status(404).json({ message: 'List not found' });
+      return res.status(404).json({ message: 'List not found' });
     }
     const artisans = await list.getArtisans();
     res.json({ list, artisans });
