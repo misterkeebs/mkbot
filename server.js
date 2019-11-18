@@ -16,8 +16,10 @@ app.use(bodyParser.json());
 
 const ApiServer = require('./server/api-server');
 const ConfirmationRoute = require('./server/confirmation-route');
+const DiscordRoutes = require('./server/discord');
 
 client.connect().then(_ => {
+  new DiscordRoutes(client, app).addRoutes();
   new ConfirmationRoute(client, app).addRoutes();
   new ApiServer(client, app).addRoutes();
 
