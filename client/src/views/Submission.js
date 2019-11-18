@@ -78,7 +78,7 @@ const Submission = () => {
     setMessage(`Thanks for your submission! We'll notify you when it gets processed.`)
   };
 
-  const alert = message && <Alert message={message} />
+  const alert = message && <Alert color="success" message={message} />
   const invalid = !(maker && sculpt && colorway);
   const imagePreview = image && (
     <>
