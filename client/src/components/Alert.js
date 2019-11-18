@@ -5,7 +5,7 @@ export default (props) => {
   const [visible, setVisible] = useState(true);
 
   const onDismiss = () => {
-    props.onDismiss();
+    props.onDismiss && props.onDismiss();
     setVisible(false);
   }
 

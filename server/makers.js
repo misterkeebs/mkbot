@@ -12,7 +12,8 @@ class MakerRoutes extends RouterConfig {
   }
 
   async getMakers(req, res, next) {
-    const data = await Maker.getWithCount(this.client);
+    const order = req.query.order;
+    const data = await Maker.getWithCount(this.client, { order });
     res.json(data.rows);
   }
 

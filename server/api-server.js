@@ -5,6 +5,7 @@ const UserRoutes = require('./user');
 const ListRoutes = require('./list');
 const MakerRoutes = require('./makers');
 const ArtisanRoutes = require('./artisans');
+const SubmissionRoutes = require('./submission');
 
 class ApiServer {
   constructor(client, app) {
@@ -29,6 +30,7 @@ class ApiServer {
     new ListRoutes(this).routes();
     new MakerRoutes(this).routes();
     new ArtisanRoutes(this).routes();
+    new SubmissionRoutes(this).routes();
   }
 }
 

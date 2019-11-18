@@ -15,6 +15,7 @@ import Artisans from "./views/Artisans";
 import Catalogs from "./views/Catalogs";
 import Catalog from "./views/Catalog";
 import Dashboard from "./views/Dashboard";
+import Submission from "./views/Submission";
 import Profile from "./views/Profile";
 import MyArtisans from "./views/MyArtisans";
 
@@ -45,6 +46,7 @@ const App = () => {
             <Route path="/catalogs/:slug" component={Catalog} />
             <Route path="/catalogs" component={Catalogs} />
             <PrivateRoute path="/dashboard" exact component={Dashboard} />
+            <PrivateRoute path="/submit" exact component={Submission} />
             <PrivateRoute path="/my-artisans" exact component={MyArtisans} />
             <PrivateRoute path="/wishlist" exact component={WishList} />
             <PrivateRoute path="/profile" component={Profile} />

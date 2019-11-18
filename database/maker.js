@@ -1,12 +1,13 @@
 const createOrm = require('./orm-base');
 const classAdditions = {
-  getWithCount: async (client) => {
+  getWithCount: async (client, options) => {
+    const order = options.order || 'count DESC';
     const sql = `
     SELECT m.maker_id, m.name, count(a.*) AS count
     FROM makers m
     JOIN artisans a ON m.maker_id = a.maker_id
     GROUP BY m.maker_id, m.name
-    ORDER BY count DESC
+    ORDER BY ${order}
     `;
     return await client.query(sql);
   },

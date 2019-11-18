@@ -36,6 +36,7 @@ const NavBar = () => {
     { name: 'Catalogs',    path: '/catalogs',     active: catalogIsActive },
     { name: 'My Artisans', path: '/my-artisans',  auth: true              },
     { name: 'WishList',    path: '/wishlist',     auth: true              },
+    { name: 'Submit',      path: '/submit',       auth: true              },
     { name: 'Bot',         path: '/bot' },
   ].filter(linkDef => {
     return !linkDef.hasOwnProperty('auth') ||
