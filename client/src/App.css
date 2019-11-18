@@ -141,13 +141,25 @@
   max-height: 400px;
 }
 
+.mkb-list {
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
 .mkb-list-message {
   margin-bottom: 10px;
 }
 
 .mkb-list-action {
-  float: right;
   text-align: right;
+}
+
+.mkb-list-action-copied {
+  font-size: 12px;
+  color: #aaa;
 }
 
 .mkb-list-text {

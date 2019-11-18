@@ -6,6 +6,9 @@ import {
   Button,
 } from 'reactstrap';
 import _ from 'lodash';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy } from '@fortawesome/free-solid-svg-icons'
 
 import { useAuth0 } from '../react-auth0-spa';
 
@@ -65,6 +68,7 @@ const ArtisanList = (props) => {
   const [list, setList] = useState(null);
   const [processing, setProcessing] = useState(null);
   const [toggling, setToggling] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     let result;
@@ -116,28 +120,38 @@ const ArtisanList = (props) => {
     setToggling(false);
   };
 
+  const handleCopied = () => {
+    setCopied(true);
+    setTimeout(() => setCopied(false), 800);
+  };
+
   const url = user && `${list.url_prefix}/${list.user_id}-${user.nickname}/${listType}`;
+  let listText = null;
+  if (user) {
+    listText = list.public
+      ? <CopyToClipboard text={url} onCopy={handleCopied}>
+          <div>
+            This artisan list is currently public
+            at <a href={url}>{url}</a> <FontAwesomeIcon icon={faCopy} color="#ccc" />
+            <span class="mkb-list-action-copied">{copied && ' copied!'}</span>
+          </div>
+        </CopyToClipboard>
+      : <div>This artisan list is currently private.</div>;
+  };
+
   const listInfo = user && (
-    <Row>
-      <Col>
-        <ListGroup className="mkb-list-message">
-          <ListGroupItem>
-            <div className="mkb-list-action">
-              {!toggling && <Button onClick={toggleVisibility} disabled={toggling}>
-                {list.public
-                  ? 'Make Private'
-                  : 'Make Public'
-                }
-              </Button>}
-              {toggling && <DataLoading />}
-            </div>
-            <div className="mkb-list-text">
-              {list.public
-                ? `This artisan list is public at ${url}`
-                : 'This artisan list is private.'}
-            </div>
-          </ListGroupItem>
-        </ListGroup>
+    <Row className="mkb-list">
+      <Col xs={8}>
+        {listText}
+      </Col>
+      <Col xs={4} className="mkb-list-action">
+        {!toggling && <a href="#noop" onClick={toggleVisibility}>
+          {list.public
+            ? 'Make Private'
+            : 'Make Public'
+          }
+        </a>}
+        {toggling && <DataLoading />}
       </Col>
     </Row>
   );
