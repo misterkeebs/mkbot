@@ -22,15 +22,6 @@ const search = async (terms, page=1) => {
   };
 };
 
-const addArtisan = async (token, listType, artisan_id) => {
-  console.log('addArtisan', token, listType, artisan_id);
-  const response = await fetch(`/api/lists/${listType}/${artisan_id}`, {
-    method: 'PUT',
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return response.json();
-};
-
 const Artisans = () => {
   const { getTokenSilently } = useAuth0();
 
@@ -39,7 +30,6 @@ const Artisans = () => {
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [processing, setProcessing] = useState(null);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
@@ -69,14 +59,6 @@ const Artisans = () => {
     [debouncedSearchTerm, page]
   );
 
-  const add = async (list, artisan) => {
-    console.log('add', list, artisan);
-    const token = await getTokenSilently();
-    setProcessing(artisan.artisan_id);
-    await addArtisan(token, list, artisan.artisan_id);
-    setProcessing(null);
-  };
-
   const onPageChange = (newPage) => {
     searchByTerm(debouncedSearchTerm, newPage);
   };
@@ -86,8 +68,6 @@ const Artisans = () => {
     : (debouncedSearchTerm
         ? <ArtisanList
             artisans={artisans}
-            onAdd={add}
-            processing={processing}
             searchTerm={debouncedSearchTerm}
             pages={pages}
             page={page}

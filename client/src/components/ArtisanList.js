@@ -1,16 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Container, Row, Col,
   Pagination, PaginationItem, PaginationLink,
 } from 'reactstrap';
 
+import { useAuth0 } from '../react-auth0-spa';
+
 import ArtisanCard from './ArtisanCard';
+import addArtisanToList from '../actions/addArtisanToList';
 
 const ArtisanList = (props) => {
   const {
-    artisans, searchTerm, onRemove, onAdd, processing,
-    page, pages, onPageChange
+    artisans, searchTerm, onRemove, page, pages, onPageChange
   } = props;
+  const { getTokenSilently } = useAuth0();
+  const [processing, setProcessing] = useState(null);
+
   if (searchTerm && artisans && !artisans.length) {
     return <Container><Row><Col>No matches for <b>{searchTerm}</b></Col></Row></Container>;
   }
@@ -24,6 +29,14 @@ const ArtisanList = (props) => {
   if (toAdd < perRow) {
     for (let i = 0; i < toAdd; i++) artisans.push(null);
   }
+
+  const add = async (list, artisan) => {
+    console.log('add', list, artisan);
+    const token = await getTokenSilently();
+    setProcessing(artisan.artisan_id);
+    await addArtisanToList(token, list, artisan.artisan_id);
+    setProcessing(null);
+  };
 
   const pagination = pages && numPages > 1 && (
     <Row>
@@ -71,7 +84,7 @@ const ArtisanList = (props) => {
     ? <ArtisanCard
       key={a.artisan_id}
       onRemove={onRemove}
-      onAdd={onAdd}
+      onAdd={add}
       artisan={a}
       processing={a.artisan_id === processing}
     />
