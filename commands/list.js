@@ -69,7 +69,8 @@ class ListCommand extends Base {
   async add() {
     const terms = this.parts.join(' ');
     const { author } = this.msg;
-    const list = await List.findOrCreate(this.client, this.type, author.id);
+    const user = await User.findOrCreate(this.client, { discord_user_id: author.id });
+    const list = await List.findOrCreate(this.client, this.type, user.user_id);
     console.log('list', list);
 
     const artisans = await this.findArtisan(terms);
