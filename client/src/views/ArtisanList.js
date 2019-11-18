@@ -64,6 +64,7 @@ const ArtisanList = (props) => {
   const [artisans, setArtisans] = useState([]);
   const [list, setList] = useState(null);
   const [processing, setProcessing] = useState(null);
+  const [toggling, setToggling] = useState(false);
 
   useEffect(() => {
     let result;
@@ -108,9 +109,11 @@ const ArtisanList = (props) => {
   }
 
   const toggleVisibility = async () => {
+    setToggling(true);
     const setPublic = !list.public;
     const newList = await updateList(getTokenSilently, listType, setPublic);
     setList(newList);
+    setToggling(false);
   };
 
   const url = user && `${list.url_prefix}/${list.user_id}-${user.nickname}/${listType}`;
@@ -120,18 +123,18 @@ const ArtisanList = (props) => {
         <ListGroup className="mkb-list-message">
           <ListGroupItem>
             <div className="mkb-list-action">
-              <Button onClick={toggleVisibility}>
+              {!toggling && <Button onClick={toggleVisibility} disabled={toggling}>
                 {list.public
                   ? 'Make Private'
                   : 'Make Public'
                 }
-              </Button>
+              </Button>}
+              {toggling && <DataLoading />}
             </div>
             <div className="mkb-list-text">
               {list.public
                 ? `This artisan list is public at ${url}`
-                : 'This artisan list is private.'
-              }
+                : 'This artisan list is private.'}
             </div>
           </ListGroupItem>
         </ListGroup>
