@@ -37,17 +37,18 @@ class DiscordRoutes {
     const image = artisans.length && artisans[0].image;
     const listType = type.charAt(0).toUpperCase() + type.substring(1);
     const description = `Artisan ${listType} for ${nickname} containing: ${artisans.map(a => `${a.maker} ${a.sculpt} ${a.colorway}`)}`;
+    const content = `${nickname}'s Artisans ${listType} - MrKeebs Artisans`
 
     res.send(dedent`
     <!DOCTYPE html>
     <html lang="en" class="h-100">
       <head>
         <meta charset="utf-8" />
-        <meta property="og:title" content="${nickname}'s Artisans ${listType}  - MrKeebs Artisans" />
+        <meta property="og:title" content="${content}" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="${url}" />
         <meta property="og:image" content="${image}" />
-        <meta property="og:description" content="Site description" />
+        <meta property="og:description" content="${description}" />
       </head>
       <body>
       </body>
