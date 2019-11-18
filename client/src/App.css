@@ -141,6 +141,19 @@
   max-height: 400px;
 }
 
+.mkb-list-message {
+  margin-bottom: 10px;
+}
+
+.mkb-list-action {
+  float: right;
+  text-align: right;
+}
+
+.mkb-list-text {
+  margin-top: 10px;
+}
+
 .nopadding {
   padding: 0;
 }

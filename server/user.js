@@ -26,7 +26,7 @@ class UserRoutes extends RouterConfig {
       return res.json(null);
     }
     const artisans = await list.getArtisans();
-    res.json(artisans);
+    res.json({ list, artisans });
   }
 
   async getUserArtisans(req, res, next) {
