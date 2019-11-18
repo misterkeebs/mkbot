@@ -128,16 +128,21 @@ const ArtisanList = (props) => {
   const url = user && `${list.url_prefix}/${list.user_id}-${user.nickname}/${listType}`;
   let listText = null;
   if (user) {
-    listText = list.public
-      ? <CopyToClipboard text={url} onCopy={handleCopied}>
-          <div>
-            This artisan list is currently public
-            at <a href={url}>{url}</a> <FontAwesomeIcon icon={faCopy} color="#ccc" />
-            <span class="mkb-list-action-copied">{copied && ' copied!'}</span>
-          </div>
-        </CopyToClipboard>
-      : <div>This artisan list is currently private.</div>;
+    if (toggling) {
+      listText = <DataLoading size="sm" />;
+    } else {
+      listText = list.public
+        ? <CopyToClipboard text={url} onCopy={handleCopied}>
+            <div>
+              This artisan list is currently public
+              at <a href={url}>{url}</a> <FontAwesomeIcon icon={faCopy} color="#ccc" />
+              <span class="mkb-list-action-copied">{copied && ' copied!'}</span>
+            </div>
+          </CopyToClipboard>
+        : <div>This artisan list is currently private.</div>;
+    }
   };
+  const listAction = list.public ? 'Make Private' : 'Make Public';
 
   const listInfo = user && (
     <Row className="mkb-list">
@@ -145,13 +150,10 @@ const ArtisanList = (props) => {
         {listText}
       </Col>
       <Col xs={4} className="mkb-list-action">
-        {!toggling && <a href="#noop" onClick={toggleVisibility}>
-          {list.public
-            ? 'Make Private'
-            : 'Make Public'
-          }
-        </a>}
-        {toggling && <DataLoading />}
+        {toggling
+          ? listAction
+          : <a href="#noop" onClick={toggleVisibility} disabled={toggling}>
+            {listAction}</a>}
       </Col>
     </Row>
   );

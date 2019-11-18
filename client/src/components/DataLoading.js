@@ -1,9 +1,9 @@
 import React from "react";
 import { Spinner } from 'reactstrap';
 
-const DataLoading = () => (
+const DataLoading = (props) => (
   <div>
-    <Spinner color="primary" />
+    <Spinner color="primary" {...props} />
   </div>
 );
 
