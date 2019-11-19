@@ -6,6 +6,7 @@ import {
 
 import Alert from '../components/Alert';
 import Loading from "../components/Loading";
+import DataLoading from "../components/DataLoading";
 import getUser from "../actions/getUser";
 import saveUser from "../actions/saveUser";
 import { useAuth0 } from "../react-auth0-spa";
@@ -17,6 +18,7 @@ const Profile = () => {
   const [name, setName] = useState(null);
   const [nickname, setNickname] = useState(null);
   const [info, setInfo] = useState(null);
+  const [saving, setSaving] = useState(false);
 
   useState(() => {
     getUser(getTokenSilently).then(user => {
@@ -25,26 +27,37 @@ const Profile = () => {
     });
   }, [getTokenSilently]);
 
-  if (loading || loadingUser || !profile || !user) {
+  if (loading || !profile) {
     return <Loading />;
   }
 
+  if (loadingUser || !user) {
+    return <DataLoading />
+  }
+
   if (!name) setName(user.name || profile.name);
-  if (!nickname) setNickname(user.nickname ||
-  profile.nickname);
+  if (!nickname) setNickname(user.nickname || profile.nickname);
 
   const handleSave = async () => {
     user.name = name;
     user.nickname = nickname;
+
+    setSaving(true);
     try {
       await saveUser(getTokenSilently, user);
       setInfo({ message: 'Profile saved.', type: 'info' });
     } catch (err) {
       setInfo({ message: `Error saving the profile: ${err}`, type: 'danger' });
+    } finally {
+      setSaving(false);
     }
   };
 
-  const alert = info ? <Alert {...info} /> : null;
+  const handleCloseAlert = _ => {
+    setInfo(null);
+    return true;
+  };
+  const alert = info ? <Alert {...info} onDismiss={handleCloseAlert} /> : null;
 
   return (
     <Form>
@@ -56,6 +69,7 @@ const Profile = () => {
           name="name"
           id="name"
           value={name}
+          disabled={saving}
           onChange={e => setName(e.target.value)}
         />
       </FormGroup>
@@ -66,11 +80,17 @@ const Profile = () => {
           name="nickname"
           id="nickname"
           value={nickname}
+          disabled={saving}
           onChange={e => setNickname(e.target.value)}
         />
       </FormGroup>
 
-      <Button onClick={handleSave}>Save</Button>
+      <Button onClick={handleSave} disabled={saving}>
+        {saving ?
+          <div>
+            <DataLoading size="sm" />
+          </div> : 'Save'}
+      </Button>
     </Form>
   );
 };
