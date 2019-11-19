@@ -145,7 +145,7 @@
 footer {
   background: #eff1f5;
   box-shadow: 0 -1px 2px 0 #dfe3ec;
-  min-height: 132px;
+  min-height: 100px;
   text-align: center;
   padding: 32px;
 }
