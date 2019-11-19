@@ -10,6 +10,7 @@ import { faCopy } from '@fortawesome/free-solid-svg-icons'
 
 import { useAuth0 } from '../react-auth0-spa';
 
+import getUser from '../actions/getUser';
 import Loading from '../components/Loading';
 import DataLoading from '../components/DataLoading';
 import ArtisanListCmp from '../components/ArtisanList';
@@ -67,6 +68,7 @@ const ArtisanList = (props) => {
   const [processing, setProcessing] = useState(null);
   const [toggling, setToggling] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [dbUser, setDbUser] = useState(null);
 
   useEffect(() => {
     let result;
@@ -76,13 +78,14 @@ const ArtisanList = (props) => {
       result = getArtisans(getTokenSilently, listType);
     }
 
-    result.then(({ list, artisans }) => {
+    Promise.all([result, getUser(getTokenSilently)]).then(([{ list, artisans }, dbUser]) => {
       console.log('list, artisans', list, artisans);
       if (userId && !list) {
         history.push('/artisans?msg=List+not+found');
       }
       setList(list);
       setArtisans(artisans);
+      setDbUser(dbUser);
       setLoading(false);
     });
   }, [getTokenSilently, listType, userId, history]);
@@ -123,7 +126,8 @@ const ArtisanList = (props) => {
     setTimeout(() => setCopied(false), 800);
   };
 
-  const url = user && `${list.url_prefix}/${list.user_id}-${user.nickname}/${listType}`;
+  const nickname = dbUser.nickname || user.nickname;
+  const url = user && `${list.url_prefix}/${list.user_id}-${nickname}/${listType}`;
   let listText = null;
   if (user) {
     if (toggling) {
