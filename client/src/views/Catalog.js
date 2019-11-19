@@ -8,6 +8,7 @@ import {
 
 import DataLoading from '../components/DataLoading';
 import ArtisanList from '../components/ArtisanList';
+import preventUnlessNewTab from '../utils/preventUnlessNewTab';
 
 const getSculpts = async (maker_id) => {
   const response = await fetch(`/api/makers/${maker_id}/sculpts`);
@@ -66,10 +67,11 @@ const Catalog = () => {
   };
 
   const navigateToSculpt = sculptDef => e => {
+    if (preventUnlessNewTab(e)) return;
     history.push(`/catalogs/${slug}/${sculptDef.sculpt}`);
     setSculpt(sculptDef.sculpt);
     return false;
-  }
+  };
 
   const sculptsEl = sculptsLoading
     ? <DataLoading />
@@ -77,7 +79,7 @@ const Catalog = () => {
       <Nav vertical>
         {sculpts.map(s =>
           <NavItem key={s.sculpt}>
-            <NavLink href="#" onClick={navigateToSculpt(s)}>
+            <NavLink href={`/catalogs/${slug}/${s.sculpt}`} onClick={navigateToSculpt(s)}>
               {s.sculpt} <Badge color="info" pill>{s.count}</Badge>
             </NavLink>
           </NavItem>
