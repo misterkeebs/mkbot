@@ -56,6 +56,7 @@ const ArtisanList = (props) => {
   let authLoading = false;
   let user, getTokenSilently;
 
+  console.log('userId', userId);
   if (!userId) {
     authLoading = useAuth.loading;
     user = useAuth.user;
@@ -77,8 +78,15 @@ const ArtisanList = (props) => {
     } else {
       result = getArtisans(getTokenSilently, listType);
     }
+    const promises = [result];
+    console.log(' *** userId', userId);
+    if (!userId) {
+      promises.push(getUser(getTokenSilently));
+    } else {
+      promises.push(Promise.resolve());
+    }
 
-    Promise.all([result, getUser(getTokenSilently)]).then(([{ list, artisans }, dbUser]) => {
+    Promise.all(promises).then(([{ list, artisans }, dbUser]) => {
       console.log('list, artisans', list, artisans);
       if (userId && !list) {
         history.push('/artisans?msg=List+not+found');
@@ -126,7 +134,7 @@ const ArtisanList = (props) => {
     setTimeout(() => setCopied(false), 800);
   };
 
-  const nickname = dbUser.nickname || user.nickname;
+  const nickname = user && (dbUser.nickname || user.nickname);
   const url = user && `${list.url_prefix}/${list.user_id}-${nickname}/${listType}`;
   let listText = null;
   if (user) {
