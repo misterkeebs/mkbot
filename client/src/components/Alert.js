@@ -10,7 +10,7 @@ export default (props) => {
   }
 
   return (
-    <Alert color="info" isOpen={visible} toggle={onDismiss}>
+    <Alert color={props.type || 'info'} isOpen={visible} toggle={onDismiss}>
       {props.message}
     </Alert>
   );

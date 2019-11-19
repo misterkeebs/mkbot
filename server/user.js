@@ -10,6 +10,7 @@ class UserRoutes extends RouterConfig {
     this.getAuth('/user/list', this.getUserArtisans.bind(this));
     this.getAuth('/user/wishlist', this.getUserWishlist.bind(this));
 
+    this.postAuth('/user', this.updateUser.bind(this));
     this.postAuth('/user/list', this.updateUserArtisans.bind(this));
     this.postAuth('/user/wishlist', this.updateUserWishlist.bind(this));
 
@@ -17,9 +18,8 @@ class UserRoutes extends RouterConfig {
   }
 
   async getUser(req, res, next) {
-    const { userProfile } = req;
-    const user = await User.findOrCreate(this.client, { email: userProfile.email });
-    res.json(user);
+    console.log(' *** this.user', this.user);
+    res.json(this.user);
   }
 
   async getUserList(type, req, res, next) {
@@ -47,8 +47,7 @@ class UserRoutes extends RouterConfig {
   async updateUserList(type, req, res, next) {
     const { userProfile } = this;
     const isPublic = req.body.public;
-    const user = await User.findOrCreate(this.client, { email: userProfile.email });
-    const list = await List.findByUser(this.client, type, user.user_id);
+    const list = await List.findByUser(this.client, type, this.user.user_id);
     if (!list) {
       return res.json(null);
     }
@@ -63,6 +62,15 @@ class UserRoutes extends RouterConfig {
 
   async getUserWishlist(req, res, next) {
     return this.getUserList('wishlist', req, res, next);
+  }
+
+  async updateUser(req, res, next) {
+    const { body } = req;
+    Object.keys(body).forEach(k => {
+      this.user[k] = body[k];
+    });
+    const user = await this.user.save();
+    res.json(user);
   }
 
   async updateUserArtisans(req, res, next) {

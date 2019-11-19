@@ -27,7 +27,7 @@ class RouterConfig {
 
   getAuth(path, fn) {
     this.app.get(`/api${path}`, this.jwtCheck, async (req, res, next) => {
-      req.userProfile = await this.fetchUserProfile(req);
+      await this.addUser(req);
       return fn(req, res, next);
     });
   }
