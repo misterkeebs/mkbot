@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation, useHistory } from 'react-router-dom';
 import {
   Container, Row, Col,
   Nav, NavItem, NavLink,
@@ -27,11 +27,12 @@ const getArtisans = async (maker_id, sculpt, page=1) => {
 };
 
 const Catalog = () => {
-  const { slug } = useParams();
+  const history = useHistory();
+  const { slug, sculpt: initialSculpt } = useParams();
   const [sculptsLoading, setSculptsLoading] = useState(true);
   const [artisansLoading, setArtisansLoading] = useState(false);
   const [sculpts, setSculpts] = useState([]);
-  const [sculpt, setSculpt] = useState(null);
+  const [sculpt, setSculpt] = useState(initialSculpt);
   const [artisans, setArtisans] = useState([]);
   const [page, setPage] = useState(null);
   const [pages, setPages] = useState(null);
@@ -42,10 +43,13 @@ const Catalog = () => {
     setSculptsLoading(true);
     getSculpts(maker_id).then(sculpts => {
       console.log('sculpts', sculpts);
+      if (sculpt) {
+        loadSculpt(sculpt);
+      }
       setSculpts(sculpts);
       setSculptsLoading(false);
-    })
-  }, [maker_id]);
+    });
+  }, [maker_id, sculpt]);
 
   const loadSculpt = async (sculpt, page=1) => {
     setArtisansLoading(true);
@@ -57,6 +61,12 @@ const Catalog = () => {
     setPages(pages);
     setPageSize(pageSize);
     setArtisansLoading(false);
+  };
+
+  const navigateToSculpt = sculptDef => e => {
+    history.push(`/catalogs/${slug}/${sculptDef.sculpt}`);
+    setSculpt(sculptDef.sculpt);
+    return false;
   }
 
   const sculptsEl = sculptsLoading
@@ -65,7 +75,7 @@ const Catalog = () => {
       <Nav vertical>
         {sculpts.map(s =>
           <NavItem key={s.sculpt}>
-            <NavLink href="#" onClick={_ => loadSculpt(s.sculpt)}>
+            <NavLink href="#" onClick={navigateToSculpt(s)}>
               {s.sculpt} <Badge color="info" pill>{s.count}</Badge>
             </NavLink>
           </NavItem>
