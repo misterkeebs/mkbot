@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation, useHistory } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import {
   Container, Row, Col,
   Nav, NavItem, NavLink,
@@ -40,15 +40,17 @@ const Catalog = () => {
   const maker_id = slug.split('-')[0];
 
   useEffect(() => {
-    setSculptsLoading(true);
-    getSculpts(maker_id).then(sculpts => {
-      console.log('sculpts', sculpts);
-      if (sculpt) {
-        loadSculpt(sculpt);
-      }
-      setSculpts(sculpts);
-      setSculptsLoading(false);
-    });
+    if (sculpt) {
+      loadSculpt(sculpt);
+    }
+
+    if (!sculpt || sculpts.length < 1) {
+      setSculptsLoading(true);
+      getSculpts(maker_id).then(sculpts => {
+        setSculpts(sculpts);
+        setSculptsLoading(false);
+      });
+    }
   }, [maker_id, sculpt]);
 
   const loadSculpt = async (sculpt, page=1) => {
