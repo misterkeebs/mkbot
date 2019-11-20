@@ -35,14 +35,19 @@ const NavBar = () => {
     location.pathname.startsWith('/catalogs')
   const links = [
     { name: 'Artisans',    path: '/artisans',     active: artisansIsActive },
-    { name: 'My Artisans', path: '/my-artisans',  auth: true               },
-    { name: 'Wishlist',    path: '/wishlist',     auth: true               },
-    { name: 'Submit',      path: '/submit',       auth: true               },
+    { name: 'My Artisans', path: '/my-artisans',  auth: true },
+    { name: 'Wishlist',    path: '/wishlist',     auth: true },
+    { name: 'Submit',      path: '/submit',       auth: true },
+    { name: 'Review',      path: '/review',       role: 'Reviewer'         },
     { name: 'Bot',         path: '/bot' },
   ].filter(linkDef => {
+    if (linkDef.role) {
+      console.log('user', user);
+      return (user && user.roles && user.roles.indexOf(linkDef.role) > -1);
+    }
     return !linkDef.hasOwnProperty('auth') ||
     (linkDef.auth === true && isAuthenticated) ||
-    (linkDef.auth === false && !isAuthenticated)
+    (linkDef.auth === false && !isAuthenticated);
   }).map(linkDef => {
     const exact = linkDef.exact !== false;
     console.log('linkDef exact', linkDef, exact);

@@ -17,6 +17,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-jwt": "^5.3.1",
+    "express-jwt-authz": "^2.3.1",
     "filenamify": "^4.1.0",
     "jimp": "^0.8.5",
     "jwks-rsa": "^1.6.0",
