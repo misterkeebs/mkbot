@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
-  Button, Container, Row, Col,
-  Form, FormGroup, Label, Input,
+  Button, Form, FormGroup, Label, Input,
 } from "reactstrap";
 
 import Alert from '../components/Alert';

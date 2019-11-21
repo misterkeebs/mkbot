@@ -30,6 +30,7 @@ const NavBar = () => {
       returnTo: window.location.origin
     });
 
+  const roles = user ? user['http://a.mrkeebs.com/roles'] : [];
   const artisansIsActive = (match, location) =>
     location.pathname.startsWith('/artisans') ||
     location.pathname.startsWith('/catalogs')
@@ -38,19 +39,17 @@ const NavBar = () => {
     { name: 'My Artisans', path: '/my-artisans',  auth: true },
     { name: 'Wishlist',    path: '/wishlist',     auth: true },
     { name: 'Submit',      path: '/submit',       auth: true },
-    { name: 'Review',      path: '/review',       role: 'Reviewer'         },
+    { name: 'Review',      path: '/review',       role: 'reviewer'         },
     { name: 'Bot',         path: '/bot' },
   ].filter(linkDef => {
     if (linkDef.role) {
-      console.log('user', user);
-      return (user && user.roles && user.roles.indexOf(linkDef.role) > -1);
+      return (roles.indexOf(linkDef.role) > -1);
     }
     return !linkDef.hasOwnProperty('auth') ||
     (linkDef.auth === true && isAuthenticated) ||
     (linkDef.auth === false && !isAuthenticated);
   }).map(linkDef => {
     const exact = linkDef.exact !== false;
-    console.log('linkDef exact', linkDef, exact);
     return <NavItem key={`nv_${linkDef.name}`}>
       <NavLink
         tag={RouterNavLink}

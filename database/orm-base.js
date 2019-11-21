@@ -28,10 +28,10 @@ module.exports = (table, options={}) => {
     };
 
     static async findOrCreate(client, query) {
-      const entity = await orm.find(data);
+      const entity = await orm.find(client, query);
       if (entity) return entity;
 
-      return await orm.create(data);
+      return await orm.create(client, data);
     };
 
     async save() {

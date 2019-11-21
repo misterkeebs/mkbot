@@ -18,6 +18,7 @@ import Catalog from './views/Catalog';
 import Dashboard from './views/Dashboard';
 import Submission from './views/Submission';
 import Profile from './views/Profile';
+import Review from './views/Review';
 import MyArtisans from './views/MyArtisans';
 import PublicList from './views/PublicList';
 
@@ -30,12 +31,13 @@ import WishList from './views/WishList';
 initFontAwesome();
 
 const App = () => {
-  const { loading } = useAuth0();
+  const { loading, user } = useAuth0();
 
   if (loading) {
     return <Loading />;
   }
 
+  const roles = user ? user['http://a.mrkeebs.com/roles'] : [];
   return (
     <Router history={history}>
       <div id="app" className="d-flex flex-column h-100">
@@ -53,6 +55,7 @@ const App = () => {
             <PrivateRoute path="/my-artisans" exact component={MyArtisans} />
             <PrivateRoute path="/wishlist" exact component={WishList} />
             <PrivateRoute path="/profile" component={Profile} />
+            {roles.includes('reviewer') && <PrivateRoute path="/review" component={Review} />}
             <Route path="/u/:slug/:listType" component={PublicList} />
           </Switch>
         </Container>
