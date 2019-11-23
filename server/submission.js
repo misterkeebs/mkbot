@@ -1,5 +1,6 @@
 const path = require('path');
 const RouterConfig = require('./router-config');
+const _ = require('lodash');
 
 const SubmissionDb = require('../database/submission');
 
@@ -7,6 +8,8 @@ class Submission extends RouterConfig {
   routes() {
     this.getAuth('/submissions', 'reviewer',
       this.getSubmissions.bind(this));
+    this.postAuth('/submissions/:submission_id', 'reviewer',
+      this.updateSubmission.bind(this))
     this.postAuth('/submissions/:submission_id/approve', 'reviewer',
       this.approve.bind(this));
     this.postAuth('/submissions/:submission_id/reject', 'reviewer',
@@ -37,6 +40,19 @@ class Submission extends RouterConfig {
     const submission = await SubmissionDb.create(this.client, {
       user_id, user, maker, sculpt, colorway, image
     });
+    res.json(submission);
+  }
+
+  async updateSubmission(req, res, next) {
+    const { submission_id } = req.params;
+    console.log(' *** req.body', req.body);
+    const submission = await SubmissionDb.find(this.client, { submission_id });
+    if (!submission) return res.status(404).json({error: 'Not found'});
+    const { maker, sculpt, colorway } = req.body;
+    const data = _.pickBy({ maker, sculpt, colorway }, v => !!v);
+    Object.keys(data).forEach(k => submission[k] = data[k]);
+    const saveRes = await submission.save();
+    console.log('saveRes', saveRes);
     res.json(submission);
   }
 

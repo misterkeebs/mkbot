@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import {
-  Table, ButtonGroup, Button
+  Table,
 } from 'reactstrap';
 import _ from 'lodash';
 
 import DataLoading from '../components/DataLoading';
+import ReviewRow from '../components/ReviewRow';
 import { useAuth0 } from "../react-auth0-spa";
 
 const getSubmissions = async (getTokenSilently) => {
@@ -30,6 +31,7 @@ const Review = () => {
   const { getTokenSilently } = useAuth0();
   const [loading, setLoading] = useState(true);
   const [submissions, setSubmissions] = useState([]);
+  const [editing, setEditing] = useState(false);
 
   useState(() => {
     getSubmissions(getTokenSilently).then(subs => {
@@ -52,32 +54,30 @@ const Review = () => {
 
   const approve = s => async e => process('approve', s);
   const reject = s => async e => process('reject', s);
+  const update = async s => {
+    console.log('s', s);
+    const token = await getTokenSilently();
+    const response = await fetch(`/api/submissions/${s.submission_id}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(s),
+    });
+    return response.json();
+  };
 
   return (
     <Table>
       <tbody>
-        {submissions.map(s => (
-          <tr key={s.submission_id}>
-            <td width="120px"><img src={s.image} alt="preview" width="100px" /></td>
-            <td>
-              <b>Maker:</b> {s.maker}<br/>
-              <b>Sculpt:</b> {s.sculpt}<br/>
-              <b>Colorway:</b> {s.colorway}<br/>
-            </td>
-            <td>
-              {s.nickname || s.user}
-            </td>
-            <td>
-              {s.created_at}
-            </td>
-            <td align="right">
-              <ButtonGroup>
-                <Button color="primary" onClick={approve(s)}>Approve</Button>
-                <Button color="primary" onClick={reject(s)}>Reject</Button>
-              </ButtonGroup>
-            </td>
-          </tr>
-        ))}
+        {submissions.map(s => <ReviewRow
+                                key={s.submission_id}
+                                submission={s}
+                                onApprove={approve}
+                                onReject={reject}
+                                onUpdate={update}
+                              />)}
       </tbody>
     </Table>
   );

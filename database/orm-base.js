@@ -31,7 +31,7 @@ module.exports = (table, options={}) => {
       const entity = await orm.find(client, query);
       if (entity) return entity;
 
-      return await orm.create(client, data);
+      return await orm.create(client, query);
     };
 
     async save() {
