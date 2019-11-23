@@ -46,7 +46,7 @@ const instanceAdditions = {
     this.processed_by = approver.user_id;
     this.status = 'approved';
     const res = await this.save();
-    await this.sendApprovalEmail(profile);
+    await this.sendApprovalEmail(approver);
     return res;
   },
 
@@ -57,9 +57,9 @@ const instanceAdditions = {
     return this.save();
   },
 
-  sendApprovalEmail: async function(userProfile) {
+  sendApprovalEmail: async function(user) {
     const email = {
-      to: userProfile.email,
+      to: this.user,
       from: { name: 'MrKeebs Artisans', email: 'artisans@mrkeebs.com' },
       subject: `Your submission for ${this.sculpt} ${this.colorway} was approved!`,
       text: dedent`
