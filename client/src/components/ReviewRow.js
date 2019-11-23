@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import {
-  InputGroup, Input, ButtonGroup, Button
+  ButtonGroup, Button
 } from 'reactstrap';
+import _ from 'lodash';
 
 import DataLoading from '../components/DataLoading';
 import SubmissionEditor from './SubmissionEditor';
 
 const ReviewRow = props => {
-  const { submission, onApprove, onReject, onUpdate } = props;
+  const { onApprove, onReject, onUpdate } = props;
   const [busy, setBusy] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [submission, setSubmission] = useState(props.submission);
 
   const executeAction = async (actionFn) => {
     console.log('submission', submission);
@@ -18,17 +20,30 @@ const ReviewRow = props => {
     setBusy(false);
   };
 
+  const update = (sub) => {
+    const newSub = _.clone(submission);
+    newSub.maker = sub.newMaker || sub.maker;
+    newSub.sculpt = sub.sculpt;
+    newSub.colorway = sub.colorway;
+    setSubmission(newSub);
+  };
+
+  const handleUpdate = async (sub) => {
+    await onUpdate(sub);
+    setEditing(false);
+  };
+
   return (
       <tr key={submission.submission_id}>
         <td width="120px"><img src={submission.image} alt="preview" width="100px" /></td>
         {editing && <td colSpan="3">
-          <SubmissionEditor submission={submission} />
+          <SubmissionEditor submission={submission} onUpdate={sub => update(sub)} />
         </td>}
         {editing && <td align="right">
           {busy
           ? <DataLoading />
           : <ButtonGroup>
-            <Button color="primary" onClick={_ => executeAction(() => onUpdate(submission))}>Save</Button>
+            <Button color="primary" onClick={_ => executeAction(() => handleUpdate(submission))}>Save</Button>
             <Button color="primary" onClick={_ => executeAction(() => setEditing(false))}>Cancel</Button>
           </ButtonGroup>}
         </td>}

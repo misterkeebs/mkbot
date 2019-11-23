@@ -31,7 +31,6 @@ const Review = () => {
   const { getTokenSilently } = useAuth0();
   const [loading, setLoading] = useState(true);
   const [submissions, setSubmissions] = useState([]);
-  const [editing, setEditing] = useState(false);
 
   useState(() => {
     getSubmissions(getTokenSilently).then(subs => {
@@ -56,6 +55,9 @@ const Review = () => {
   const reject = s => async e => process('reject', s);
   const update = async s => {
     console.log('s', s);
+    if (s.newMaker) {
+      s.maker = s.newMaker;
+    }
     const token = await getTokenSilently();
     const response = await fetch(`/api/submissions/${s.submission_id}`, {
       method: 'POST',

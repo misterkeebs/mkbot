@@ -52,6 +52,7 @@ const Catalog = () => {
         setSculptsLoading(false);
       });
     }
+  // eslint-disable-next-line
   }, [maker_id, sculpt]);
 
   const loadSculpt = async (sculpt, page=1) => {

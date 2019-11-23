@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
-  Container, Row, Col, Button,
   Form, FormGroup, Label, Input,
 } from 'reactstrap';
+import _ from 'lodash';
 
 import DataLoading from './DataLoading';
 
@@ -11,89 +11,103 @@ const getMakers = async () => {
   return response.json();
 };
 
-class SubmissionEditor {
+export default class SubmissionEditor extends React.Component {
   constructor(props) {
+    super(props);
     const { submission } = props;
     this.props = props;
     this.state = {
+      submission: { maker: '', newMaker: '', sculpt: '', colorway: '' },
       loading: true,
-      submission
+      makers: [],
     };
-  }
 
-  render() {
-    <Form>
-      <FormGroup>
-        <Label for="maker">Maker</Label>
-        <Input type="select" name="maker" id="maker" value={maker} disabled={uploading} onChange={update('set')}>
-          {makers.map((m, i) => <option key={i}>{m.name}</option>)}
-        </Input>
-      </FormGroup>
-      {maker && maker === 'New maker...' &&
-        <FormGroup>
-          <Label for="newMaker">Maker</Label>
-          <Input
-            type="text" name="newMaker" id="newMaker" value={newMaker} disabled={uploading}
-            onChange={e => setNewMaker(e.target.value)}
-          />
-        </FormGroup>
-      }
-      <FormGroup>
-        <Label for="sculpt">Sculpt</Label>
-        <Input
-          type="text" name="sculpt" id="sculpt" value={sculpt} disabled={uploading}
-          onChange={e => setSculpt(e.target.value)}
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label for="colorway">Colorway</Label>
-        <Input
-          type="text" name="colorway" id="colorway" value={colorway} disabled={uploading}
-          onChange={e => setColorway(e.target.value)}
-        />
-      </FormGroup>
-    </Form>
-  }
-}
-
-const SubmissionEditor = props => {
-  const { submission, loading, uploading } = props;
-  const [makers, setMakers] = useState([]);
-  const [maker, setMaker] = useState(null);
-  const [newMaker, setNewMaker] = useState(null);
-  const [sculpt, setSculpt] = useState(null);
-  const [colorway, setColorway] = useState(null);
-  const [makersLoading, setMakersLoading] = useState(true);
-
-  useState(() => {
     getMakers().then(makers => {
       makers.unshift({});
       makers.push({ maker_id: 'new', name: 'New maker...' });
-      setMakers(makers);
+
       const makerTerm = submission && submission.maker && submission.maker.toLowerCase();
       const maker = submission.maker && makers
         .filter(m => !!m.name)
         .find(m => m.name.toLowerCase().indexOf(makerTerm) > -1);
       if (maker) {
-        setMaker(maker.name || '');
+        submission.maker = maker.name || '';
       } else {
-        setMaker('New maker...');
-        setNewMaker(submission.maker);
+        submission.newMaker = submission.maker;
+        submission.maker = 'New maker...';
       }
-      setSculpt(submission.sculpt);
-      setColorway(submission.colorway);
-      setMakersLoading(false);
+      const loading = false;
+      this.setState({ submission, makers, loading });
     });
-  }, []);
+  }
 
-  if (loading) return;
+  update(field) {
+    return e => {
+      const submission = _.clone(this.state.submission);
+      submission[field] = e.target.value;
+      this.setState({ submission });
+      this.props.onUpdate && this.props.onUpdate(submission);
+    };
+  }
 
-  if (makersLoading) return <DataLoading />;
+  render() {
+    const { submission, makers, loading } = this.state;
 
-  const update(fiel)
+    if (loading) {
+      return <DataLoading />;
+    }
 
-  return (
-  );
+    return (
+      <Form>
+        <FormGroup>
+          <Label for="maker">Maker</Label>
+          <Input
+            type="select"
+            id="maker"
+            name="maker"
+            value={submission.maker}
+            disabled={loading}
+            onChange={this.update('maker').bind(this)}
+          >
+            {makers.map((m, i) => <option key={i}>{m.name}</option>)}
+          </Input>
+        </FormGroup>
+        {submission.maker && submission.maker === 'New maker...' &&
+          <FormGroup>
+            <Label for="newMaker">Maker</Label>
+            <Input
+              type="text"
+              id="newMaker"
+              name="newMaker"
+              value={submission.newMaker}
+              disabled={loading}
+              onChange={this.update('newMaker').bind(this)}
+            />
+          </FormGroup>
+        }
+        <FormGroup>
+          <Label for="sculpt">Sculpt</Label>
+          <Input
+            type="text"
+            id="sculpt"
+            name="sculpt"
+            value={submission.sculpt}
+            disabled={loading}
+            onChange={this.update('sculpt').bind(this)}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="colorway">Colorway</Label>
+          <Input
+            type="text"
+            id="colorway"
+            name="colorway"
+            value={submission.colorway}
+            disabled={loading}
+            onChange={this.update('colorway').bind(this)}
+          />
+        </FormGroup>
+      </Form>
+    )
+  }
 }
-
-export default SubmissionEditor;
