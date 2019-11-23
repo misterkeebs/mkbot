@@ -36,7 +36,7 @@ class Submission extends RouterConfig {
     const { maker, sculpt, colorway } = req.body;
     const image = this.uploadUrl;
     const { user_id } = this.user;
-    const user = this.userProfile.nickname;
+    const user = this.userProfile.email;
     const submission = await SubmissionDb.create(this.client, {
       user_id, user, maker, sculpt, colorway, image
     });
@@ -62,7 +62,7 @@ class Submission extends RouterConfig {
     if (!sub) {
       return res.status(404).json({ message: 'Not found' });
     }
-    await sub.approve(this.user);
+    await sub.approve(this.user, this.userProfile);
     res.json(sub);
   }
 
@@ -72,7 +72,7 @@ class Submission extends RouterConfig {
     if (!sub) {
       return res.status(404).json({ message: 'Not found' });
     }
-    await sub.reject(this.user);
+    await sub.reject(this.user, this.userProfile);
     res.json(sub);
   }
 }

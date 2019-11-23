@@ -13,10 +13,13 @@ const ReviewRow = props => {
   const [editing, setEditing] = useState(false);
   const [submission, setSubmission] = useState(props.submission);
 
+  console.log(' *** onUpdate', onUpdate);
+
   const executeAction = async (actionFn) => {
     console.log('submission', submission);
     setBusy(true);
     await actionFn();
+    console.log('done', actionFn);
     setBusy(false);
   };
 
@@ -29,6 +32,7 @@ const ReviewRow = props => {
   };
 
   const handleUpdate = async (sub) => {
+    console.log(' *** handleUpdate', sub);
     await onUpdate(sub);
     setEditing(false);
   };

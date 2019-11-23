@@ -1,4 +1,7 @@
 const _ = require('lodash');
+const dedent = require('dedent');
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const Artisan = require('./artisan');
 const Maker = require('./maker');
@@ -26,8 +29,8 @@ const classAdditions = {
 };
 
 const instanceAdditions = {
-  approve: async function(approver) {
-    console.log(' *** XXX this', this);
+  approve: async function(approver, profile) {
+    console.log(' *** approver', approver);
     const data = _.pick(this, ['collection', 'sculpt', 'colorway', 'image']);
     data.submitted_by = this.user;
     data.submitted_at = this.created_at;
@@ -42,7 +45,9 @@ const instanceAdditions = {
     this.processed_at = new Date();
     this.processed_by = approver.user_id;
     this.status = 'approved';
-    return this.save();
+    const res = await this.save();
+    await this.sendApprovalEmail(profile);
+    return res;
   },
 
   reject: async function(approver) {
@@ -50,6 +55,36 @@ const instanceAdditions = {
     this.processed_by = approver.user_id;
     this.status = 'rejected';
     return this.save();
+  },
+
+  sendApprovalEmail: async function(userProfile) {
+    const email = {
+      to: userProfile.email,
+      from: { name: 'MrKeebs Artisans', email: 'artisans@mrkeebs.com' },
+      subject: `Your submission for ${this.sculpt} ${this.colorway} was approved!`,
+      text: dedent`
+      Hey there,
+
+      One of our reviewers just approved your submission for the
+      ${this.sculpt} ${this.colorway} keycap from ${this.maker || this.newMaker}.
+
+      I wanted to thank you personally for helping we grow this community driven database!
+
+      In an upcoming release we will add a badge to your account with the number
+      of contributions you did :)
+
+      Best,
+
+      MrKeebs
+      `,
+    };
+
+    try {
+      return await sgMail.send(email);
+    } catch (err) {
+      console.error('Error sending email', err);
+      return err;
+    }
   }
 };
 
