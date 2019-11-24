@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Container, Row, Col,
+  Container, Row, Col, Badge,
   FormGroup, Label, Input,
 } from 'reactstrap';
 import { NavLink } from 'react-router-dom';
@@ -99,7 +99,8 @@ const Artisans = () => {
         <Row key={maker.maker_id}>
           <Col>
             <NavLink to={`/catalogs/${maker.maker_id}-${slugify(maker.name)}`}>
-              {maker.name}
+              {maker.name}&nbsp;
+              <Badge color="info" pill>{maker.count}</Badge>
             </NavLink>
           </Col>
         </Row>
