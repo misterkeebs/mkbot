@@ -44,7 +44,6 @@ const Review = () => {
   }
 
   const process = async (action, s) => {
-    console.log(' *** action, s', action, s);
     await performAction(getTokenSilently, action, s.submission_id);
     const newSubmissions = _.clone(submissions);
     const pos = newSubmissions.indexOf(s);
@@ -56,7 +55,6 @@ const Review = () => {
   const reject = async s => process('reject', s);
 
   const update = async s => {
-    console.log(' *** UPDATE', s);
     if (s.newMaker) {
       s.maker = s.newMaker;
     }

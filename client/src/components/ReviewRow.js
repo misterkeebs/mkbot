@@ -13,19 +13,16 @@ const ReviewRow = props => {
   const [editing, setEditing] = useState(false);
   const [submission, setSubmission] = useState(props.submission);
 
-  console.log(' *** onUpdate', onUpdate);
-
   const executeAction = async (actionFn) => {
-    console.log('submission', submission);
     setBusy(true);
     await actionFn();
-    console.log('done', actionFn);
     setBusy(false);
   };
 
   const update = (sub) => {
     const newSub = _.clone(submission);
-    newSub.maker = sub.newMaker || sub.maker;
+    newSub.newMaker = sub.newMaker;
+    newSub.maker = sub.maker;
     newSub.sculpt = sub.sculpt;
     newSub.colorway = sub.colorway;
     setSubmission(newSub);

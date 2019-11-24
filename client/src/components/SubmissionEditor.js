@@ -43,8 +43,9 @@ export default class SubmissionEditor extends React.Component {
 
   update(field) {
     return e => {
+      const { value } = e.target;
       const submission = _.clone(this.state.submission);
-      submission[field] = e.target.value;
+      submission[field] = value;
       this.setState({ submission });
       this.props.onUpdate && this.props.onUpdate(submission);
     };
