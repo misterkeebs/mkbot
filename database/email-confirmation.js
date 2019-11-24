@@ -1,23 +1,18 @@
 const dedent = require('dedent');
-const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+const Email = require('./email');
 const createOrm = require('./orm-base');
 
 const instanceAdditions = {
-  sendEmail: async function() {
-    console.log('Sending to', this.email);
-    const email = {
-      to: this.email,
-      from: { name: 'MKBot', email: 'mkbot@mrkeebs.com' },
-      subject: 'Please confirm your email for MKBot',
-      text: dedent`
+  sendEmail: async function(user) {
+    Email.send(this.email, 'Please confirm your email for MKBot', dedent`
       Hey there,
 
       Someone, hopefully you, requested to confirm this email to be used
       with MKBot.
 
-      If this request was made by you, please click here to confirm:
+      If you are user ${user.username}#${user.discriminator} on Discord
+      and if this request was made by you, please click here to confirm:
 
       ${process.env.BASE_URL}/api/confirm/${this.token}
 
@@ -25,16 +20,7 @@ const instanceAdditions = {
 
       Best,
       MKBot
-      `,
-    };
-
-    try {
-      const res = await sgMail.send(email);
-      return;
-    } catch (err) {
-      console.log('Error sending email', err, err.response.body);
-      return err;
-    }
+    `);
   }
 };
 

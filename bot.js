@@ -33,6 +33,7 @@ class Bot {
   }
 
   async execute(msg) {
+    console.log('msg', msg);
     const isDM = msg.channel && msg.channel.type === 'dm';
     if (isDM) {
       if (await handleDM(this.client, msg)) return;

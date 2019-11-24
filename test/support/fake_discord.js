@@ -8,9 +8,19 @@ class FakeDiscord {
       ssl: process.env.TEST_DATABASE_USE_SSL !== 'false',
     });
     this.bot = new Bot(this.client);
+    this.author = {
+      id: 'AUTHOR_ID',
+      username: `nickname`,
+      discriminator: `0909`,
+    };
+  }
+
+  get lastReply() {
+    return this.lastMessage && this.lastMessage.msg;
   }
 
   async init() {
+    this.messages = [];
     return await this.client.connect();
   }
 
@@ -28,12 +38,16 @@ class FakeDiscord {
     const member = {
 
     };
+    const author = this.author;
     const msg = {
+      author,
       channel,
       member,
       content: str,
       reply: (msg, options) => {
-        this.lastReply = { msg, options };
+        const message = { msg, options };
+        this.messages.push(message)
+        this.lastMessage = message;
       },
     };
     await bot.execute(msg);

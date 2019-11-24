@@ -15,7 +15,6 @@ bot.on('ready', () => {
 });
 
 bot.on('message', async msg => {
-  console.log('client', client);
   const handler = new Bot(client);
   handler.execute(msg);
 });

@@ -32,7 +32,6 @@ class BaseCommand {
       }
       return hash;
     }, { missing: [], values: [] });
-    console.log('res', res);
     if (res.missing.length) {
       const { cmdDef } = this.msg;
       const attrStr = attrs.map(a => `[${a}]`).join(' ');
@@ -43,8 +42,6 @@ class BaseCommand {
   }
 
   reply(text, options) {
-    console.log('text', text);
-    console.log('options', options);
     this.msg.reply(text, options);
   }
 }
