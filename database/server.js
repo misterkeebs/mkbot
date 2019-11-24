@@ -30,9 +30,6 @@ class Server extends Base {
     const guildData = msg.guild;
     const channelData = msg.channel;
 
-    console.log(' *** userData', userData);
-    console.log(' *** channelData', channelData);
-
     if (cmd.userRole) {
       const userRole = await User.findUserRole(client, userData.id);
       if (userRole === 'admin') {

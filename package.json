@@ -39,6 +39,7 @@
   },
   "scripts": {
     "test": "mocha",
+    "test:watch": "mocha -w",
     "server": "nodemon server.js",
     "bot": "nodemon index.js",
     "client": "cd client && yarn start"

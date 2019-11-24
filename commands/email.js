@@ -9,9 +9,8 @@ class EmailCommand extends Base {
     if (!email) return;
 
     const discord_user_id = this.user.id;
-    let conf;
+    let conf = await EmailConfirmation.find(this.client, { discord_user_id });
     if (email === 'resend') {
-      conf = await EmailConfirmation.find(this.client, { discord_user_id });
       if (!conf) {
         return this.reply(`You don't have any pending confirmations. Use \`!email [email]\` to confirm your email.`);
       }
@@ -21,7 +20,7 @@ class EmailCommand extends Base {
       }
 
       const token = uuidv3(`${email}-${new Date()}`, process.env.APP_KEY);
-      conf = await EmailConfirmation.create(this.client, { email, discord_user_id, token })
+      conf = await EmailConfirmation.create(this.client, { email, discord_user_id, token });
     }
 
     const err = await conf.sendEmail();
