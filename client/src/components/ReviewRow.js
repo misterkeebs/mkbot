@@ -29,7 +29,6 @@ const ReviewRow = props => {
   };
 
   const handleUpdate = async (sub) => {
-    console.log(' *** handleUpdate', sub);
     await onUpdate(sub);
     setEditing(false);
   };
