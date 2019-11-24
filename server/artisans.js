@@ -13,7 +13,6 @@ class ArtisanRoutes extends RouterConfig {
     const result =
       await Artisan.getAll(this.client, { page, perPage, terms: q }) || [];
     const count = result[0] ? result[0].full_count : 0;
-    console.log(' *** result', result);
     const artisans = result.map(a => _.omit(a, 'full_count'));
     res
       .header('X-Pagination-Page', page)

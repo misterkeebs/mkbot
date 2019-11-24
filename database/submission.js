@@ -30,7 +30,6 @@ const classAdditions = {
 
 const instanceAdditions = {
   approve: async function(approver, profile) {
-    console.log(' *** approver', approver);
     const data = _.pick(this, ['collection', 'sculpt', 'colorway', 'image']);
     data.submitted_by = this.user;
     data.submitted_at = this.created_at;

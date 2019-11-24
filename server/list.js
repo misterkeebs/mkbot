@@ -18,7 +18,6 @@ class ListRoutes extends RouterConfig {
     const { type, artisan_id } = req.params;
     const list = await List.findOrCreate(this.client, type, this.user.user_id);
     const response = await list.add({ artisan_id });
-    console.log(' *** response', response);
     res.json({ added: response && response.rowCount > 0 });
   }
 }

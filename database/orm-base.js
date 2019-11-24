@@ -36,9 +36,7 @@ module.exports = (table, options={}) => {
 
     async save() {
       const set = this.toJSON();
-      console.log('set', set);
       const where = `${pk} = $1`;
-      console.log('where', where);
       return await this.update({ table, set, where, data: [this[pk]] });
     }
   }

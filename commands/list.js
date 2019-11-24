@@ -44,7 +44,6 @@ class ListCommand extends Base {
 
   async view() {
     const list = await this.getList();
-    console.log('list', list);
     if (!list) return;
 
     const artisans = await list.getArtisans();
@@ -71,10 +70,8 @@ class ListCommand extends Base {
     const { author } = this.msg;
     const user = await User.findOrCreate(this.client, { discord_user_id: author.id });
     const list = await List.findOrCreate(this.client, this.type, user.user_id);
-    console.log('list', list);
 
     const artisans = await this.findArtisan(terms);
-    console.log('artisans', artisans);
     if (!artisans) return;
 
     const total = artisans.length;
@@ -98,7 +95,7 @@ class ListCommand extends Base {
       const res = await list.add(artisans);
       return this.reply(`${format(artisans)} added to your list!`, card(artisans));
     } catch (err) {
-      console.log('err', err);
+      console.error('Error adding to artisan list', err);
       if (err.message.indexOf('unique constraint')) {
         return this.reply(`${format(artisans)} was already on your list!`);
       } else {

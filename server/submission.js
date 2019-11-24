@@ -45,7 +45,6 @@ class Submission extends RouterConfig {
 
   async updateSubmission(req, res, next) {
     const { submission_id } = req.params;
-    console.log(' *** req.body', req.body);
     const submission = await SubmissionDb.find(this.client, { submission_id });
     if (!submission) return res.status(404).json({error: 'Not found'});
     const { maker, sculpt, colorway } = req.body;

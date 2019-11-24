@@ -31,7 +31,6 @@ const ArtisanList = (props) => {
   }
 
   const add = async (list, artisan) => {
-    console.log('add', list, artisan);
     const token = await getTokenSilently();
     setProcessing(artisan.artisan_id);
     await addArtisanToList(token, list, artisan.artisan_id);

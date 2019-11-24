@@ -56,7 +56,6 @@ const ArtisanList = (props) => {
   let authLoading = false;
   let user, getTokenSilently;
 
-  console.log('userId', userId);
   if (!userId) {
     authLoading = useAuth.loading;
     user = useAuth.user;
@@ -79,7 +78,6 @@ const ArtisanList = (props) => {
       result = getArtisans(getTokenSilently, listType);
     }
     const promises = [result];
-    console.log(' *** userId', userId);
     if (!userId) {
       promises.push(getUser(getTokenSilently));
     } else {
@@ -87,7 +85,6 @@ const ArtisanList = (props) => {
     }
 
     Promise.all(promises).then(([{ list, artisans }, dbUser]) => {
-      console.log('list, artisans', list, artisans);
       if (userId && !list) {
         history.push('/artisans?msg=List+not+found');
       }

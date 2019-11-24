@@ -18,7 +18,6 @@ class Base {
         .merge(_.pick(this, this.readOnlyFields))
         .omit(['client', 'prototype', 'length', 'readOnlyFields'])
         .value();
-    console.log(' *** JSON this', res);
     return res;
   }
 
@@ -43,9 +42,7 @@ class Base {
   }
 
   async save(table, pk = `${inflex.singular(table)}_id`) {
-    console.log(' *** this.public', this.public);
     const set = _.omit(this.toJSON(), this.readOnlyFields);
-    console.log(' *** set', set);
     const where = `${pk} = $1`;
     return await this.update({ table, set, where, data: [this[pk]] });
   }

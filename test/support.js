@@ -1,6 +1,8 @@
 require('dotenv').config();
-
 const { Client } = require('pg');
+
+const Debug = require('../debug');
+global.logLevel = Debug.DEBUG;
 
 async function connect() {
   const client = new Client({
@@ -11,6 +13,7 @@ async function connect() {
   await client.connect();
   return client;
 }
+
 
 module.exports = {
   connect,

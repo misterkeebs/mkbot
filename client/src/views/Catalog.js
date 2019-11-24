@@ -58,7 +58,6 @@ const Catalog = () => {
   const loadSculpt = async (sculpt, page=1) => {
     setArtisansLoading(true);
     const { artisans, pages, pageSize } = await getArtisans(maker_id, sculpt, page);
-    console.log('artisans', { artisans, page, pages });
     setSculpt(sculpt);
     setArtisans(artisans);
     setPage(page);

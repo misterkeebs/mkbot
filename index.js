@@ -16,7 +16,7 @@ bot.on('ready', () => {
 
 bot.on('message', async msg => {
   const handler = new Bot(client);
-  handler.execute(msg);
+  await handler.execute(msg);
 });
 
 const client = new Client({

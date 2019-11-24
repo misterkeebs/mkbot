@@ -1,5 +1,6 @@
 const Base = require('./base');
 const db = require('../db');
+const { info } = require('../debug');
 const User = require('./user');
 
 class Server extends Base {
@@ -35,14 +36,14 @@ class Server extends Base {
       if (userRole === 'admin') {
         return true;
       }
-      console.log('Command needs', cmd.userRole, 'user is', userRole);
+      info('Command needs', cmd.userRole, 'user is', userRole);
       return cmd.userRole === userRole;
     }
 
     if (guildData && channelData) {
       if (userData && cmd.permission) {
         if (!msg.channel.permissionsFor(msg.member).has(cmd.permission)) {
-          console.log('User', msg.author.username, 'does not have', cmd.permission, 'on', `#${msg.channel.name} channel`);
+          info('User', msg.author.username, 'does not have', cmd.permission, 'on', `#${msg.channel.name} channel`);
           return false;
         }
       }

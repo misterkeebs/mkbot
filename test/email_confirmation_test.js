@@ -1,14 +1,12 @@
 const expect = require('chai').expect;
 const DBMigrate = require('db-migrate');
-const { Client } = require('pg');
+const { connect } = require('./support');
 
 const FakeDiscord = require('./support/fake_discord');
-client = new Client({
-  connectionString: process.env.TEST_DATABASE,
-  ssl: process.env.TEST_DATABASE_USE_SSL !== 'false',
-});
 
 let bot;
+let client;
+
 describe('!email command', () => {
   before(async () => {
     global.emails = [];
@@ -18,8 +16,10 @@ describe('!email command', () => {
     });
     await dbmigrate.reset();
     await dbmigrate.up();
-    await client.connect();
+    client = await connect();
   });
+
+  after(async () => await client.end());
 
   beforeEach(() => {
     bot = new FakeDiscord();

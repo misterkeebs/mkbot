@@ -14,9 +14,10 @@ describe('Server DB', () => {
   let client;
 
   before(async () => {
-    console.log('before');
     client = await connect();
   });
+
+  after(async () => client.end());
 
   beforeEach(async () => {
     await client.query('TRUNCATE TABLE servers');

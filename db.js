@@ -1,5 +1,6 @@
 const dedent = require('dedent');
 const _ = require('lodash');
+const { log } = require('./debug.js');
 
 function parseWhere(def) {
   if (!_.isArray(def.where) && _.isObject(def.where)) {
@@ -29,15 +30,14 @@ class DB {
     (${fields.map(f => `"${f}"`).join(', ')})
     VALUES
     (${indexes}) RETURNING *`;
-    console.log('sql', sql, values);
+    log('sql', sql, values);
     return db.query(sql, values).then(res => {
-      console.log('res', res.rows);
+      log('res', res.rows);
       return res.rows[0];
     });
   }
 
   select(db, options) {
-    console.log(' *** this', this);
     return this.selectAll(db, options).then(rows => {
       if (rows.length < 2) {
         return rows[0];
@@ -78,9 +78,9 @@ class DB {
     }
 
     const sql = _.flatten(sqlArr).join('');
-    console.log('sql', sql, data);
+    log('sql', sql, data);
     return db.query(sql, data).then(res => {
-      console.log('res', res);
+      log('res', res);
       return res.rows;
     });
   }
@@ -96,7 +96,7 @@ class DB {
     RETURNING *
     `;
 
-    console.log('sql', sql, _.flatten(data));
+    log('sql', sql, _.flatten(data));
     return db.query(sql, _.flatten(data)).then(res => {
       return res.rows[0];
     });
@@ -108,7 +108,7 @@ class DB {
     const sql = dedent`
     DELETE FROM ${table}
     WHERE ${whereClause}`;
-    console.log('sql', sql, values);
+    log('sql', sql, values);
     return db.query(sql, values);
   }
 }

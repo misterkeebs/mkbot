@@ -49,6 +49,5 @@ class ChannelCommand extends BaseCommand {
 }
 
 module.exports = async function(client, msg, content) {
-  console.log(' *** before running');
   await new ChannelCommand(client, msg, content).run();
 };

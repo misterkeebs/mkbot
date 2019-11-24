@@ -1,9 +1,10 @@
 const sgMail = require('@sendgrid/mail');
+const { log } = require('../debug');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 class Email {
   async send(to, subject, body) {
-    console.log(`Email "${subject}" to`, to);
+    log(`Email "${subject}" to`, to);
     const email = {
       to,
       from: { name: 'MKBot', email: 'mkbot@mrkeebs.com' },
@@ -20,7 +21,7 @@ class Email {
     try {
       return await sgMail.send(email);
     } catch (err) {
-      console.log('Error sending email', err, err.response.body);
+      console.error('Error sending email', err, err.response.body);
       return err;
     }
   }
