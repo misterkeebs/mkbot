@@ -1,8 +1,8 @@
 const expect = require('chai').expect;
 const DBMigrate = require('db-migrate');
-const { connect } = require('./support');
+const { connect } = require('../support');
 
-const FakeDiscord = require('./support/fake_discord');
+const FakeDiscord = require('../support/fake_discord');
 
 let bot;
 let client;

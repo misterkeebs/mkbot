@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
-const { connect, query } = require('./support');
+const { connect, query } = require('../support');
 
-const Server = require('../database/server');
+const Server = require('../../database/server');
 
 const addServer = async (client, whitelist, blacklist) => {
   const sql = `
