@@ -26,7 +26,7 @@ exports.up = function(db) {
     db.createTable('users', {
       user_id: { type: 'int', primaryKey: true, autoIncrement: true },
       created_at: { type: 'timestamp', defaultValue: { toString: () => 'CURRENT_TIMESTAMP' } },
-      discord_user_id: { type: 'string', notNull: true },
+      discord_user_id: { type: 'string' },
       email: 'string',
       role: 'string',
     }),

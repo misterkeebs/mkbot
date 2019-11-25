@@ -24,7 +24,11 @@ module.exports = (table, options={}) => {
 
     static async create(client, data) {
       const insertedData = await db.insert(client, table, data);
-      return new orm(client, insertedData);
+      const res = new orm(client, insertedData);
+      if (this.afterCreate) {
+        await this.afterCreate(client, data);
+      }
+      return res;
     };
 
     static async findOrCreate(client, query) {
@@ -38,6 +42,10 @@ module.exports = (table, options={}) => {
       const set = this.toJSON();
       const where = `${pk} = $1`;
       return await this.update({ table, set, where, data: [this[pk]] });
+    }
+
+    async reload() {
+      return orm.find(client, { user_id: this.user_id });
     }
   }
 

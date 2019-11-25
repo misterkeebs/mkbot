@@ -5,6 +5,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const Artisan = require('./artisan');
 const Maker = require('./maker');
+const User = require('./user');
 const createOrm = require('./orm-base');
 
 const classAdditions = {
@@ -13,6 +14,7 @@ const classAdditions = {
     SELECT
       s.submission_id, s.created_at, s.user, u.name, u.nickname,
       s.image, s.maker, s.sculpt, s.colorway,
+      s.author, s.anonymous,
       SUBSTRING(s.user_id, '([\\d]{1,9})') as x
     FROM
       submissions s
@@ -26,12 +28,22 @@ const classAdditions = {
       return res.rows;
     });
   },
+
+  afterCreate: async function(client, data) {
+    if (data.anonymous && data.anonymous !== 'false') return;
+
+    const user = await User.find(client, { user_id: data.user_id });
+    if (!user) return;
+
+    user.nickname = data.author;
+    return await user.save();
+  },
 };
 
 const instanceAdditions = {
   approve: async function(approver, profile) {
     const data = _.pick(this, ['collection', 'sculpt', 'colorway', 'image']);
-    data.submitted_by = this.user;
+    data.submitted_by = this.anonymous ? 'Anonymous' : this.author;
     data.submitted_at = this.created_at;
     data.submission_id = this.submission_id;
 
@@ -45,6 +57,7 @@ const instanceAdditions = {
     this.processed_by = approver.user_id;
     this.status = 'approved';
     const res = await this.save();
+
     await this.sendApprovalEmail(approver);
     return res;
   },

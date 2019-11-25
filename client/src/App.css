@@ -64,6 +64,13 @@
   background-color: rgba(128, 255, 255, .5);
 }
 
+.mkb-artisan-card .credit {
+  text-align: right;
+  margin: 8px -10px -10px 0;
+  font-size: 0.7em;
+  color: #888;
+}
+
 .mkb-makers .col {
   text-align: left;
 }

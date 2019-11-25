@@ -8,6 +8,7 @@ import axios from 'axios';
 import { useAuth0 } from '../react-auth0-spa';
 import Alert from "../components/Alert";
 import DataLoading from '../components/DataLoading';
+import getUser from '../actions/getUser';
 
 const getMakers = async () => {
   const response = await fetch(`/api/makers?order=name`);
@@ -26,7 +27,16 @@ const Submission = () => {
   const [sculpt, setSculpt] = useState(null);
   const [colorway, setColorWay] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [author, setAuthor] = useState(null);
+  const [wantsCredit, setWantsCredit] = useState(true);
+  const [makeNickname, setMakeNickname] = useState(true);
   const [message, setMessage] = useState(null);
+
+  useState(() => {
+    getUser(getTokenSilently).then(user => {
+      setAuthor(user.nickname || (user.email && user.email.split('@')[0]));
+    });
+  }, []);
 
   const imageHandler = async (e) => {
     setLoading(true);
@@ -57,7 +67,7 @@ const Submission = () => {
     </Col>
   );
 
-  if (loading) return <DataLoading />
+  if (loading) return <DataLoading />;
 
   const submit = async () => {
     setUploading(true);
@@ -67,6 +77,10 @@ const Submission = () => {
     formData.append('sculpt', sculpt);
     formData.append('colorway', colorway);
     formData.append('image', image);
+    formData.append('anonymous', !wantsCredit);
+    if (wantsCredit) {
+      formData.append('author', author);
+    }
     await axios.put('/api/submissions', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -116,6 +130,27 @@ const Submission = () => {
               onChange={e => setColorWay(e.target.value)}
             />
           </FormGroup>
+          <FormGroup check>
+            <Label for="wantsCredit">
+              <Input
+                type="checkbox" name="wantsCredit" id="wantsCredit"
+                disabled={uploading} checked={wantsCredit}
+                onChange={e => setWantsCredit(e.target.checked)}
+              />{' '}
+              Credit me for the submission
+            </Label>
+          </FormGroup>
+          {wantsCredit && <FormGroup>
+            <Label for="author">How do you want to be credited as?</Label>
+            <Input
+              type="text" name="author" id="author"
+              value={author} disabled={uploading}
+              onChange={e => setAuthor(e.target.value)}
+            />
+          </FormGroup>}
+          {!wantsCredit && <FormGroup>
+            <Label>This submission will be sent anonymously.</Label>
+          </FormGroup>}
         </Form>
         <Container className="nopadding">
           <Row noGutters>

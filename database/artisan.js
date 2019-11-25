@@ -11,7 +11,7 @@ class Artisan extends Base {
       where=[],
       data=[],
     } = options;
-    const fields = 'a.artisan_id, m.name AS maker, a.sculpt, a.colorway, a.image';
+    const fields = 'a.artisan_id, m.name AS maker, a.sculpt, a.colorway, a.image, a.submitted_by, a.submitted_at';
     const table = 'artisans a';
     const joins = ['makers m ON m.maker_id = a.maker_id'];
     if (options.terms) {

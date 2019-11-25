@@ -33,12 +33,12 @@ class Submission extends RouterConfig {
   }
 
   async addSubmission(req, res, next) {
-    const { maker, sculpt, colorway } = req.body;
+    const { maker, sculpt, colorway, author, anonymous } = req.body;
     const image = this.uploadUrl;
     const { user_id } = this.user;
     const user = this.userProfile.email;
     const submission = await SubmissionDb.create(this.client, {
-      user_id, user, maker, sculpt, colorway, image
+      user_id, user, author, anonymous, maker, sculpt, colorway, image
     });
     res.json(submission);
   }

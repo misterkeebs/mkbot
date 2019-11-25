@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   ButtonGroup, Button
 } from 'reactstrap';
+import Sugar from 'sugar';
 import _ from 'lodash';
 
 import DataLoading from '../components/DataLoading';
@@ -25,6 +26,8 @@ const ReviewRow = props => {
     newSub.maker = sub.maker;
     newSub.sculpt = sub.sculpt;
     newSub.colorway = sub.colorway;
+    newSub.author = sub.author;
+    newSub.anonymous = sub.anonymous;
     setSubmission(newSub);
   };
 
@@ -53,10 +56,10 @@ const ReviewRow = props => {
           <b>Colorway:</b> {submission.colorway}<br/>
         </td>}
         {!editing && <td>
-          {submission.nickname || submission.user}
+          {submission.anonymous ? 'Anonymous' : submission.author}
         </td>}
         {!editing && <td>
-          {submission.created_at}
+          {Sugar.Date.relative(new Date(submission.created_at))}
         </td>}
         {!editing && <td align="right">
           {busy

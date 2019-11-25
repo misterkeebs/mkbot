@@ -1,30 +1,30 @@
-const Nightmare = require('nightmare');
 const expect = require('chai').expect;
+const { connect, query } = require('../support');
 
-function login() {
-  return new Nightmare()
-    .goto('http://localhost:3000/artisans')
-    .wait('#qsLoginBtn')
-    .click('#qsLoginBtn')
-    .wait('[name="email"]')
-    .wait(2000)
-    .type('[name="email"]', process.env.TEST_EMAIL)
-    .type('[name="password"]', process.env.TEST_PASSWORD)
-    .click('.auth0-lock-submit')
-    .wait(2000)
-    .wait('#profileDropDown');
-}
+const User = require('../../database/user');
+const Submission = require('../../database/submission');
 
-describe('login', function() {
-  this.timeout('20s');
-
-  it('displays the user badge after login', () => {
-    return login().end();
+describe('submission', () => {
+  let client;
+  before(async () => {
+    client = await connect();
   });
-});
 
-describe('searching', () => {
-  it('return results', () => {
-
+  describe('creating new submission', () => {
+    it('sets the user nickname if author is set', async () => {
+      const user = await User.create(client, { email: 'felipe@coury.com.br' });
+      const sub = await Submission.create(client, {
+        user: 'felipe@coury.com.br',
+        user_id: user.user_id,
+        maker: 'MAKER',
+        sculpt: 'SCULPT',
+        colorway: 'COLORWAY',
+        image: 'IMAGE',
+        anonymous: 'false',
+        author: 'mynick',
+      });
+      const newUser = await user.reload();
+      expect(newUser.nickname).to.eql('mynick');
+    });
   });
 });

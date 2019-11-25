@@ -44,6 +44,10 @@ class User extends Base {
     return await super.save('users', 'user_id');
   }
 
+  async reload() {
+    return User.find(this.client, { user_id: this.user_id });
+  }
+
   async sendPrivateMessage(text) {
     const { discord_user_id } = this;
     return new Promise(async (resolve, reject) => {

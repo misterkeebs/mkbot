@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faTrashAlt, faTimes, faCheck, faListAlt, faHeart,
 } from '@fortawesome/free-solid-svg-icons'
+import Sugar from 'sugar';
 
 import { useAuth0 } from "../react-auth0-spa";
 import DataLoading from './DataLoading';
@@ -82,7 +83,14 @@ const ArtisanCard = (props) => {
         {isAuthenticated && removeOverlay}
         <CardBody>
           <CardTitle><b>{formatName(artisan)} </b></CardTitle>
-          <CardSubtitle>{artisan.maker}</CardSubtitle>
+          <CardSubtitle>
+            {artisan.maker}
+            {artisan.submitted_by && <div className="credit">
+              {artisan.submitted_by}
+              &nbsp;·&nbsp;
+              {artisan.submitted_at && Sugar.Date.relative(new Date(artisan.submitted_at))}
+            </div>}
+          </CardSubtitle>
         </CardBody>
       </Card>
     </Col>

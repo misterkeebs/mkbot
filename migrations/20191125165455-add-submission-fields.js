@@ -23,8 +23,8 @@ exports.up = function(db) {
 
 exports.down = function(db) {
   return Promise.all([
-    db.dropColumn('submissions', 'anonymous'),
-    db.dropColumn('submissions', 'author'),
+    db.removeColumn('submissions', 'anonymous'),
+    db.removeColumn('submissions', 'author'),
   ]);
 };
 
