@@ -6,6 +6,18 @@ const Artisan = require('../database/artisan');
 class ArtisanRoutes extends RouterConfig {
   routes() {
     this.get('/artisans', this.getArtisans.bind(this));
+    this.get('/artisans/similar', this.getSimilarArtisans.bind(this));
+  }
+
+  async getSimilarArtisans(req, res, next) {
+    const { term, threshold } = req.query;
+    try {
+      const artisans = await Artisan.getSimilar(this.client, term, threshold);
+      res.json(artisans);
+    } catch (error) {
+      console.error('Error getting similar artisans', error);
+      res.status(500).json({ message: error.message, error });
+    }
   }
 
   async getArtisans(req, res, next) {

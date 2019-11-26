@@ -10,6 +10,7 @@ import axios from 'axios';
 import { useAuth0 } from '../react-auth0-spa';
 import Alert from "../components/Alert";
 import DataLoading from '../components/DataLoading';
+import ArtisanList from '../components/ArtisanList';
 import getUser from '../actions/getUser';
 
 const getMakers = async () => {
@@ -37,6 +38,7 @@ const Submission = () => {
   const [author, setAuthor] = useState(null);
   const [wantsCredit, setWantsCredit] = useState(true);
   const [sculpts, setSculpts] = useState([]);
+  const [similars, setSimilars] = useState(null);
   const [message, setMessage] = useState(null);
 
   useState(() => {
@@ -76,8 +78,27 @@ const Submission = () => {
 
   if (loading) return <DataLoading />;
 
+  const findSimilars = async () => {
+    const token = await getTokenSilently();
+    const res = await fetch(`/api/artisans/similar?term=${encodeURI(`${sculpt} ${colorway}`)}`);
+    const matches = await res.json();
+    if (!matches.length) {
+      return false;
+    }
+    setUploading(false);
+    setSimilars(matches);
+  };
+
+  const cancel = () => {
+    setImage(null);
+    setSimilars(null);
+  };
+
   const submit = async () => {
     setUploading(true);
+    if (!similars) {
+      if (await findSimilars()) return;
+    }
     const token = await getTokenSilently();
     const formData = new FormData();
     formData.append('maker', newMaker || maker);
@@ -96,6 +117,7 @@ const Submission = () => {
     });
     setUploading(false);
     setImage(null);
+    setSimilars(null);
     setMessage(`Thanks for your submission! We'll notify you when it gets processed.`)
   };
 
@@ -105,19 +127,17 @@ const Submission = () => {
     const makerObj = makers.find(m => m.name === maker);
     setUploading(true);
     const sculpts = await getSculpts(makerObj.maker_id);
-    console.log('sculpts', sculpts);
     setSculpts(sculpts.map(s => s.sculpt));
     setUploading(false);
   };
 
   const handleSculpt = sculpt => {
-    console.log('sculpt', sculpt);
     setSculpt(sculpt);
   };
 
   const alert = message && <Alert color="success" message={message} />
   const invalid = !(maker && sculpt && colorway);
-  const imagePreview = image && (
+  const imagePreview = image && !similars && (
     <>
       <Col className="mkb-file-preview" xs={6}>
         <img src={preview} alt="Preview" />
@@ -202,6 +222,25 @@ const Submission = () => {
     </>
   );
 
+  const similarEl = similars && <Row>
+    <Col>
+      <p>
+        Before submitting please review the following possible matches we found:
+      </p>
+      <ArtisanList artisans={similars} />
+      <Button color="primary" disabled={uploading || invalid} onClick={submit}>
+        My Submission is Not on the List
+      </Button>
+      {' '}
+      <Button color="secondary" disabled={uploading || invalid} onClick={cancel}>
+        Oops, It's a Duplicate :(
+      </Button>
+      {' '}
+      {uploading && <DataLoading />}
+    </Col>
+  </Row>;
+
+
   return (
     <>
       {alert}
@@ -209,6 +248,7 @@ const Submission = () => {
         <Row>
           {uploadForm}
           {imagePreview}
+          {similarEl}
         </Row>
       </Container>
     </>

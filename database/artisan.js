@@ -8,7 +8,7 @@ class Artisan extends Base {
     const {
       order='maker, sculpt, colorway',
       page=1, perPage=30,
-      where=[],
+      where=null,
       data=[],
     } = options;
     const fields = 'a.artisan_id, m.name AS maker, a.sculpt, a.colorway, a.image, a.submitted_by, a.submitted_at';
@@ -25,6 +25,26 @@ class Artisan extends Base {
       fields, table, order, joins, page, perPage, where, data
     });
     return results;
+  }
+
+  static async getSimilar(client, term, _threshold='0.4') {
+    const sql = `
+    SELECT
+      a.artisan_id, a.collection, m.name AS maker,
+      a.sculpt, a.colorway, a.image, a.submitted_by,
+      created_at as timestamp,
+      SIMILARITY(a.sculpt || ' ' || a.colorway, $1) AS similarity
+    FROM artisans a
+    JOIN makers m ON m.maker_id = a.maker_id
+    WHERE SIMILARITY(a.sculpt || ' ' || a.colorway, $1) IS NOT NULL
+    AND SIMILARITY(a.sculpt || ' ' || a.colorway, $1) > $2
+    ORDER BY similarity DESC
+    LIMIT 5
+    `;
+    const threshold = parseFloat(_threshold);
+    return client.query(sql, [term, threshold]).then(res => {
+      return res.rows;
+    });
   }
 
   static async search(client, _term) {
