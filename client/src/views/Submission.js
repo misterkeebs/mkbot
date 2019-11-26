@@ -86,6 +86,7 @@ const Submission = () => {
     }
     setUploading(false);
     setSimilars(matches);
+    return true;
   };
 
   const cancel = () => {
@@ -96,7 +97,9 @@ const Submission = () => {
   const submit = async () => {
     setUploading(true);
     if (!similars) {
-      if (await findSimilars()) return;
+      const res = await findSimilars();
+      console.log('res', res);
+      if (res) return;
     }
     const token = await getTokenSilently();
     const formData = new FormData();
