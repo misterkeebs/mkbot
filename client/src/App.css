@@ -176,3 +176,26 @@
 .nopadding {
   padding: 0;
 }
+
+.mkb-artisan-page {
+  padding: 0;
+  margin-top: -20px;
+}
+
+.mkb-artisan-page .row.title .col,
+.mkb-artisan-page .row.image,
+.mkb-artisan-page .row.actions {
+  text-align: center;
+}
+
+.mkb-artisan-page .row.image img {
+  max-height: 600px;
+}
+
+.mkb-artisan-page .row.actions {
+  margin: 10px 0;
+}
+
+.mkb-artisan-page .row.actions .col {
+  padding: 0;
+}

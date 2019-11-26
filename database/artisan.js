@@ -1,9 +1,15 @@
 const Base = require('./base');
 
 const db = require('../db');
-const table = 'artisan';
+const table = 'artisans';
 
 class Artisan extends Base {
+  static async find(client, where) {
+    const data = await db.select(client, { table, where });
+    if (!data) return;
+    return new Artisan(client, data);
+  }
+
   static async getAll(client, options) {
     const {
       order='maker, sculpt, colorway',

@@ -32,7 +32,7 @@ const NavBar = () => {
 
   const roles = user ? user['http://a.mrkeebs.com/roles'] : [];
   const artisansIsActive = (match, location) =>
-    location.pathname.startsWith('/artisans') ||
+    location.pathname.startsWith('/artisan') ||
     location.pathname.startsWith('/catalogs')
   const links = [
     { name: 'Artisans',    path: '/artisans',     active: artisansIsActive },

@@ -12,6 +12,7 @@ import history from './utils/history';
 import Message from './components/Message';
 import Home from './views/Home';
 import Bot from './views/Bot';
+import Artisan from './views/Artisan';
 import Artisans from './views/Artisans';
 import Catalogs from './views/Catalogs';
 import Catalog from './views/Catalog';
@@ -47,6 +48,7 @@ const App = () => {
           <Switch>
             <Route path="/" exact component={Home} />
             <Route path="/bot" exact component={Bot} />
+            <Route path="/artisans/:id" exact component={Artisan} />
             <Route path="/artisans" exact component={Artisans} />
             <Route path="/catalogs/:slug/:sculpt?" component={Catalog} />
             <Route path="/catalogs" component={Catalogs} />
