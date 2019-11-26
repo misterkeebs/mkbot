@@ -79,7 +79,6 @@ const Submission = () => {
   if (loading) return <DataLoading />;
 
   const findSimilars = async () => {
-    const token = await getTokenSilently();
     const res = await fetch(`/api/artisans/similar?term=${encodeURI(`${sculpt} ${colorway}`)}`);
     const matches = await res.json();
     if (!matches.length) {
