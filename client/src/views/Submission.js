@@ -3,6 +3,8 @@ import {
   Container, Row, Col, Button,
   Form, FormGroup, Label, Input,
 } from 'reactstrap';
+import { Typeahead } from 'react-bootstrap-typeahead';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 import axios from 'axios';
 
 import { useAuth0 } from '../react-auth0-spa';
@@ -14,6 +16,11 @@ const getMakers = async () => {
   const response = await fetch(`/api/makers?order=name`);
   return response.json();
 };
+
+const getSculpts = async (maker_id) => {
+  const response = await fetch(`/api/makers/${maker_id}/sculpts`);
+  return response.json();
+}
 
 const Submission = () => {
   const { getTokenSilently } = useAuth0();
@@ -29,7 +36,7 @@ const Submission = () => {
   const [uploading, setUploading] = useState(false);
   const [author, setAuthor] = useState(null);
   const [wantsCredit, setWantsCredit] = useState(true);
-  const [makeNickname, setMakeNickname] = useState(true);
+  const [sculpts, setSculpts] = useState([]);
   const [message, setMessage] = useState(null);
 
   useState(() => {
@@ -92,6 +99,22 @@ const Submission = () => {
     setMessage(`Thanks for your submission! We'll notify you when it gets processed.`)
   };
 
+  const setMakerAndGetSculpts = async (maker) => {
+    setMaker(maker);
+    if (maker === 'New maker...') return;
+    const makerObj = makers.find(m => m.name === maker);
+    setUploading(true);
+    const sculpts = await getSculpts(makerObj.maker_id);
+    console.log('sculpts', sculpts);
+    setSculpts(sculpts.map(s => s.sculpt));
+    setUploading(false);
+  };
+
+  const handleSculpt = sculpt => {
+    console.log('sculpt', sculpt);
+    setSculpt(sculpt);
+  };
+
   const alert = message && <Alert color="success" message={message} />
   const invalid = !(maker && sculpt && colorway);
   const imagePreview = image && (
@@ -103,7 +126,11 @@ const Submission = () => {
         <Form>
           <FormGroup>
             <Label for="maker">Maker</Label>
-            <Input type="select" name="maker" id="maker" disabled={uploading} onChange={e => setMaker(e.target.value)}>
+            <Input
+              type="select" name="maker" id="maker"
+              disabled={uploading} onChange={e => setMakerAndGetSculpts(e.target.value)}
+              autoComplete="off"
+            >
               {makers.map((m, i) => <option key={i}>{m.name}</option>)}
             </Input>
           </FormGroup>
@@ -118,15 +145,22 @@ const Submission = () => {
           }
           <FormGroup>
             <Label for="sculpt">Sculpt</Label>
-            <Input
-              type="text" name="sculpt" id="sculpt" disabled={uploading}
-              onChange={e => setSculpt(e.target.value)}
+            <Typeahead
+              allowNew={true}
+              newSelectionPrefix={''}
+              emptyLabel={false}
+              options={sculpts}
+              name="sculpt"
+              id="sculpt"
+              disabled={uploading}
+              onBlur={e => handleSculpt(e.target.value)}
             />
           </FormGroup>
           <FormGroup>
             <Label for="colorway">Colorway</Label>
             <Input
               type="text" name="colorway" id="colorway" disabled={uploading}
+              autoComplete="off"
               onChange={e => setColorWay(e.target.value)}
             />
           </FormGroup>
@@ -134,6 +168,7 @@ const Submission = () => {
             <Label for="wantsCredit">
               <Input
                 type="checkbox" name="wantsCredit" id="wantsCredit"
+                autoComplete="off"
                 disabled={uploading} checked={wantsCredit}
                 onChange={e => setWantsCredit(e.target.checked)}
               />{' '}
@@ -144,6 +179,7 @@ const Submission = () => {
             <Label for="author">How do you want to be credited as?</Label>
             <Input
               type="text" name="author" id="author"
+              autoComplete="off"
               value={author} disabled={uploading}
               onChange={e => setAuthor(e.target.value)}
             />
