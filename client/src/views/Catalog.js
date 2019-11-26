@@ -16,7 +16,8 @@ const getSculpts = async (maker_id) => {
 };
 
 const getArtisans = async (maker_id, sculpt, page=1) => {
-  const response = await fetch(`/api/makers/${maker_id}/artisans?sculpt=${sculpt}&page=${page}`);
+  const sculptTerm = `sculpt=${sculpt.replace('&', '%26')}`;
+  const response = await fetch(`/api/makers/${maker_id}/artisans?${sculptTerm}&page=${page}`);
   const artisans = await response.json();
   const headers = response.headers;
   return {
