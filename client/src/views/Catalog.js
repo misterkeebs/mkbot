@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { NavLink as RouterNavLink, useParams, useHistory } from 'react-router-dom';
 import {
   Container, Row, Col,
   Nav, NavItem, NavLink,
+  Breadcrumb, BreadcrumbItem,
   Badge,
 } from 'reactstrap';
 
@@ -40,6 +41,7 @@ const Catalog = () => {
   const [pages, setPages] = useState(null);
   const [pageSize, setPageSize] = useState(null);
   const maker_id = slug.split('-')[0];
+  const maker = slug.split('-')[1];
 
   useEffect(() => {
     if (sculpt) {
@@ -92,6 +94,23 @@ const Catalog = () => {
     loadSculpt(sculpt, newPage);
   };
 
+  const breadcrumbs = (
+    <Row>
+      <Col>
+        <Breadcrumb>
+          <BreadcrumbItem><RouterNavLink to="/artisans">Artisans</RouterNavLink></BreadcrumbItem>
+          {sculpt ? (
+            <>
+            <BreadcrumbItem><RouterNavLink to={`/catalogs/${slug}`}>{maker}</RouterNavLink></BreadcrumbItem>
+            <BreadcrumbItem>{sculpt}</BreadcrumbItem>
+            </>
+          ) : (
+            <BreadcrumbItem>{maker}</BreadcrumbItem>
+          )}
+        </Breadcrumb>
+      </Col>
+    </Row>
+  );
   const artisansEl = artisansLoading
     ? <DataLoading />
     : <ArtisanList
@@ -104,6 +123,7 @@ const Catalog = () => {
 
   return (
     <Container>
+      {breadcrumbs}
       <Row>
         <Col xs="2">
           {sculptsEl}
