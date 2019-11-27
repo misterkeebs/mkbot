@@ -189,7 +189,7 @@
 }
 
 .mkb-artisan-page .row.image img {
-  max-height: 600px;
+  max-height: 400px;
 }
 
 .mkb-artisan-page .row.actions {
@@ -198,4 +198,8 @@
 
 .mkb-artisan-page .row.actions .col {
   padding: 0;
+}
+
+.mkb-artisan-page .maker {
+  margin: -10px 0 40px;
 }

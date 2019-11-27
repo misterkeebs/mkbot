@@ -39,13 +39,17 @@ const ArtisanCard = (props) => {
     </CardImgOverlay>
   );
 
-  const addTo = (list) => () => {
+  const addTo = (list) => (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     onAdd && onAdd(list, artisan);
+    return false;
   };
 
   const addOverlay = onAdd && (showIcons &&
     <CardImgOverlay
-      style={{display: showIcons ? 'block' : 'none'}}
+      style={{display: showIcons ? 'block' : 'none', cursor: 'pointer'}}
+      onClick={_ => console.log('hey')}
     >
       <FontAwesomeIcon icon={faListAlt} color="black" onClick={addTo('list')} /> &nbsp;
       <FontAwesomeIcon icon={faHeart} color="black" onClick={addTo('wishlist')} />

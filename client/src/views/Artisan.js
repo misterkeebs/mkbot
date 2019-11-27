@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import {
   Container, Row, Col, Button,
 } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faTrashAlt, faTimes, faCheck, faListAlt, faHeart,
+  faTrashAlt, faListAlt, faHeart, faImage,
 } from '@fortawesome/free-solid-svg-icons'
 
 import { useAuth0 } from "../react-auth0-spa";
@@ -21,7 +21,7 @@ const getArtisan = async (artisan_id) => {
 
 const Artisan = props => {
   const { id } = useParams();
-  const { loading: pageLoading, getTokenSilently } = useAuth0();
+  const { isAuthenticated, getTokenSilently } = useAuth0();
   const artisan_id = id && parseInt(id.split('-')[0], 10);
   const [loading, setLoading] = useState(false);
   const [processing, setProcessing] = useState(null);
@@ -33,13 +33,17 @@ const Artisan = props => {
   const getUserWishlist = getAuth(getTokenSilently, '/user/wishlist');
 
   useState(() => {
+    const listPromise = isAuthenticated
+      ? getUserList(getTokenSilently)
+      : Promise.resolve({ artisans: [] });
+    const wishlistPromise = isAuthenticated
+      ? getUserWishlist(getTokenSilently)
+      : Promise.resolve({ artisans: [] });
     Promise.all([
-      getUserList(getTokenSilently),
-      getUserWishlist(getTokenSilently),
+      listPromise,
+      wishlistPromise,
       getArtisan(artisan_id),
     ]).then(([list, wishlist, artisan]) => {
-      console.log('list', list);
-      console.log('wishlist', wishlist);
       setList(list);
       setWishlist(wishlist);
       setArtisan(artisan);
@@ -47,7 +51,7 @@ const Artisan = props => {
     });
   }, [id]);
 
-  if (pageLoading || loading || !artisan) return <DataLoading />;
+  if (loading || !artisan) return <DataLoading />;
 
   const addTo = (list, name) => async _ => {
     const token = await getTokenSilently();
@@ -68,11 +72,55 @@ const Artisan = props => {
 
   const inList = list && list.artisans.find(a => a.artisan_id === artisan_id);
   const inWishlist = wishlist && wishlist.artisans.find(a => a.artisan_id === artisan_id);
+  const actions = (
+    <Row className="actions">
+      <Col>
+        {inList
+          ? <Button color="danger" onClick={removeFrom(list, 'list')} disabled={processing === 'list'}>
+              {processing === 'list'
+                ? <DataLoading size="sm" />
+                : <FontAwesomeIcon icon={faTrashAlt} color="white" />}{' '}
+              Remove from My Artisans
+            </Button>
+          : <Button color="primary" onClick={addTo(list, 'list')} disabled={processing === 'list'}>
+              {processing === 'list'
+                ? <DataLoading size="sm" />
+                : <FontAwesomeIcon icon={faListAlt} color="white" />}{' '}
+              Add to My Artisans
+            </Button>
+        }
+        {' '}
+        {inWishlist
+          ? <Button color="danger" onClick={removeFrom(wishlist, 'wishlist')} disabled={processing === 'list'}>
+              {processing === 'wishlist'
+                ? <DataLoading size="sm" />
+                : <FontAwesomeIcon icon={faTrashAlt} color="white" />}{' '}
+              Remove from Wishlist
+            </Button>
+          : <Button color="primary" onClick={addTo(wishlist, 'wishlist')} disabled={processing === 'list'}>
+              {processing === 'wishlist'
+                ? <DataLoading size="sm" />
+                : <FontAwesomeIcon icon={faHeart} color="white" />}{' '}
+              Add to Wishlist
+            </Button>
+        }
+        {' '}
+        {false && <Button color="primary">
+          <FontAwesomeIcon icon={faImage} color="white" />{' '}
+          Add New Image for This Sculpt
+        </Button>}
+      </Col>
+    </Row>
+  );
+
   return (
     <Container className="mkb-artisan-page">
       <Row className="title">
         <Col>
           <h1>{artisan.sculpt} {artisan.colorway}</h1>
+          <div class="maker">
+            by <NavLink to={artisan.makerLink}>{artisan.maker}</NavLink>
+          </div>
         </Col>
       </Row>
       <Row className="image">
@@ -83,39 +131,7 @@ const Artisan = props => {
           />
         </Col>
       </Row>
-      <Row className="actions">
-        <Col>
-          {inList
-            ? <Button color="danger" onClick={removeFrom(list, 'list')} disabled={processing === 'list'}>
-                {processing === 'list'
-                  ? <DataLoading size="sm" />
-                  : <FontAwesomeIcon icon={faTrashAlt} color="white" />}{' '}
-                Remove from My Artisans
-              </Button>
-            : <Button color="primary" onClick={addTo(list, 'list')} disabled={processing === 'list'}>
-                {processing === 'list'
-                  ? <DataLoading size="sm" />
-                  : <FontAwesomeIcon icon={faListAlt} color="white" />}{' '}
-                Add to My Artisans
-              </Button>
-          }
-          {' '}
-          {inWishlist
-            ? <Button color="danger" onClick={removeFrom(wishlist, 'wishlist')} disabled={processing === 'list'}>
-                {processing === 'wishlist'
-                  ? <DataLoading size="sm" />
-                  : <FontAwesomeIcon icon={faTrashAlt} color="white" />}{' '}
-                Remove from Wishlist
-              </Button>
-            : <Button color="primary" onClick={addTo(wishlist, 'wishlist')} disabled={processing === 'list'}>
-                {processing === 'list'
-                  ? <DataLoading size="sm" />
-                  : <FontAwesomeIcon icon={faHeart} color="white" />}{' '}
-                Add to Wishlist
-              </Button>
-          }
-        </Col>
-      </Row>
+      {isAuthenticated && actions}
     </Container>
   )
 };

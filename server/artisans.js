@@ -37,7 +37,7 @@ class ArtisanRoutes extends RouterConfig {
 
   async getArtisan(req, res, next) {
     const { artisan_id } = req.params;
-    const artisan = await Artisan.find(this.client, { artisan_id });
+    const artisan = await Artisan.find(this.client, { 'a.artisan_id': artisan_id });
     if (!artisan) {
       res.status(404).json({ error: 'Not found' });
     }

@@ -5,7 +5,11 @@ const table = 'artisans';
 
 class Artisan extends Base {
   static async find(client, where) {
-    const data = await db.select(client, { table, where });
+    const fields = 'a.artisan_id, a.maker_id, m.name AS maker, a.sculpt, a.colorway, a.image, a.submitted_by, a.submitted_at';
+    const table = 'artisans a';
+    const joins = ['makers m ON m.maker_id = a.maker_id'];
+    const data = await db.select(client, {
+      table, where, fields, joins });
     if (!data) return;
     return new Artisan(client, data);
   }
@@ -17,7 +21,7 @@ class Artisan extends Base {
       where=null,
       data=[],
     } = options;
-    const fields = 'a.artisan_id, m.name AS maker, a.sculpt, a.colorway, a.image, a.submitted_by, a.submitted_at';
+    const fields = 'a.artisan_id, a.maker_id, m.name AS maker, a.sculpt, a.colorway, a.image, a.submitted_by, a.submitted_at';
     const table = 'artisans a';
     const joins = ['makers m ON m.maker_id = a.maker_id'];
     if (options.terms) {
@@ -86,6 +90,17 @@ class Artisan extends Base {
 
       return new Artisan(client, match);
     });
+  }
+
+  get makerLink() {
+    const param = encodeURI(`${this.maker_id}-${this.maker}`);
+    return `/catalogs/${param}`;
+  }
+
+  toJSON() {
+    const res = super.toJSON();
+    res.makerLink = this.makerLink;
+    return res;
   }
 }
 
