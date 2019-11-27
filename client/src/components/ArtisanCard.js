@@ -85,7 +85,10 @@ const ArtisanCard = (props) => {
       onMouseEnter={_ => setShowIcons(true) }
       onMouseLeave={_ => { setShowIcons(false); setShowConfirm(false); } }
     >
-      <Card className="mkb-artisan-card">
+      <Card
+        className="mkb-artisan-card"
+        onClick={navigateTo(artisan)}
+      >
         <CardImg
           top width="20%"
           src={artisan.image}

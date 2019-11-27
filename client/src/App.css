@@ -46,6 +46,7 @@
 .mkb-artisan-card {
   min-width: 200px;
   margin-bottom: 15px;
+  cursor: pointer;
 }
 
 .mkb-artisan-card .card-img-overlay {
