@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   Col, Card, CardImg, CardBody,
   CardTitle, CardSubtitle, CardImgOverlay,
@@ -18,6 +19,7 @@ function formatName(data) {
 }
 
 const ArtisanCard = (props) => {
+  const history = useHistory();
   const [showIcons, setShowIcons] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const { artisan, onRemove, onAdd, processing } = props;
@@ -46,10 +48,17 @@ const ArtisanCard = (props) => {
     return false;
   };
 
+  const navigateTo = a => e => {
+    e.preventDefault();
+    e.stopPropagation();
+    const url = encodeURI(`/artisans/${a.artisan_id}-${a.sculpt}-${a.colorway}`);
+    history.push(url);
+  };
+
   const addOverlay = onAdd && (showIcons &&
     <CardImgOverlay
       style={{display: showIcons ? 'block' : 'none', cursor: 'pointer'}}
-      onClick={_ => console.log('hey')}
+      onClick={navigateTo(artisan)}
     >
       <FontAwesomeIcon icon={faListAlt} color="black" onClick={addTo('list')} /> &nbsp;
       <FontAwesomeIcon icon={faHeart} color="black" onClick={addTo('wishlist')} />

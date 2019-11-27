@@ -2,6 +2,7 @@ const dedent = require('dedent');
 
 const User = require('../database/user');
 const List = require('../database/list');
+const Artisan = require('../database/artisan');
 
 class DiscordRoutes {
   constructor(client, app) {
@@ -12,17 +13,57 @@ class DiscordRoutes {
   addRoutes() {
     this.app.use(async (req, res, next) => {
       const agent = req.get('User-Agent');
+      const isDiscord = agent && agent.indexOf('Discord') > -1;
       const path = req.path;
-      if (agent && path && path.startsWith('/u/') && agent.indexOf('Discord') > -1) {
-        if (await this.handleDiscord(req, res, next)) {
+      if (!isDiscord) return next();
+
+      if (path.startsWith('/u/')) {
+        if (await this.handleUserLinks(req, res, next)) {
           return;
         }
       }
-      next();
+
+      const matches = path.match('^/artisans/(.*)');
+      if (matches) {
+        if (await this.handleArtisanLink(matches[1], req, res, next)) {
+          return;
+        }
+      }
+
+      return next();
     });
   }
 
-  async handleDiscord(req, res, next) {
+  async handleArtisanLink(name, req, res, next) {
+    const artisan_id = name.split('-')[0];
+    const artisan = await Artisan.find(this.client, { artisan_id });
+
+    if (!artisan) return false;
+
+    const url = `${process.env.BASE_URL}${req.path}`;
+    const image = artisan.image;
+    const description = `Page for the ${artisan.sculpt} ${artisan.colorway} artisan, by ${artisan.maker}.`;
+    const content = `${artisan.maker} - ${artisan.sculpt} ${artisan.colorway} - MrKeebs Artisans`;
+
+    res.send(dedent`
+    <!DOCTYPE html>
+    <html lang="en" class="h-100">
+      <head>
+        <meta charset="utf-8" />
+        <meta property="og:title" content="${content}" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="${url}" />
+        <meta property="og:image" content="${image}" />
+        <meta property="og:description" content="${description}" />
+      </head>
+      <body>
+      </body>
+    </html>
+    `);
+    return true;
+  }
+
+  async handleUserLinks(req, res, next) {
     // /u/:id-:slug/:type
     const [_1, _2, slug, type] = req.path.split('/');
     const [user_id, nickname] = slug.split('-');

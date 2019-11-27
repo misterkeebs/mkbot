@@ -69,7 +69,7 @@ const Catalog = () => {
 
   const navigateToSculpt = sculptDef => e => {
     if (preventUnlessNewTab(e)) return;
-    history.push(`/catalogs/${slug}/${sculptDef.sculpt}`);
+    history.push(encodeURI(`/catalogs/${slug}/${sculptDef.sculpt}`));
     setSculpt(sculptDef.sculpt);
     return false;
   };

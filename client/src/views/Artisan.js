@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 import {
   Container, Row, Col, Button,
+  Breadcrumb, BreadcrumbItem,
 } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -70,6 +71,19 @@ const Artisan = props => {
     setProcessing(null);
   };
 
+  const breadcrumbs = (
+    <Row>
+      <Col>
+        <Breadcrumb>
+          <BreadcrumbItem><NavLink to="/artisans">Artisans</NavLink></BreadcrumbItem>
+          <BreadcrumbItem><NavLink to={`/catalogs/${artisan.maker_id}-${artisan.maker}`}>{artisan.maker}</NavLink></BreadcrumbItem>
+          <BreadcrumbItem><NavLink to={`/catalogs/${artisan.maker_id}-${artisan.maker}/${artisan.sculpt}`}>{artisan.sculpt}</NavLink></BreadcrumbItem>
+          <BreadcrumbItem>{artisan.colorway}</BreadcrumbItem>
+        </Breadcrumb>
+      </Col>
+    </Row>
+  );
+
   const inList = list && list.artisans.find(a => a.artisan_id === artisan_id);
   const inWishlist = wishlist && wishlist.artisans.find(a => a.artisan_id === artisan_id);
   const actions = (
@@ -115,10 +129,11 @@ const Artisan = props => {
 
   return (
     <Container className="mkb-artisan-page">
+      {breadcrumbs}
       <Row className="title">
         <Col>
           <h1>{artisan.sculpt} {artisan.colorway}</h1>
-          <div class="maker">
+          <div className="maker">
             by <NavLink to={artisan.makerLink}>{artisan.maker}</NavLink>
           </div>
         </Col>
