@@ -6,8 +6,8 @@ const Artisan = require('../database/artisan');
 class ArtisanRoutes extends RouterConfig {
   routes() {
     this.get('/artisans', this.getArtisans.bind(this));
-    this.get('/artisans/:artisan_id', this.getArtisan.bind(this));
     this.get('/artisans/similar', this.getSimilarArtisans.bind(this));
+    this.get('/artisans/:artisan_id', this.getArtisan.bind(this));
   }
 
   async getSimilarArtisans(req, res, next) {
