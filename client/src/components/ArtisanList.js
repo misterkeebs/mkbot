@@ -4,8 +4,6 @@ import {
   Pagination, PaginationItem, PaginationLink,
 } from 'reactstrap';
 
-import { useAuth0 } from '../react-auth0-spa';
-
 import ArtisanCard from './ArtisanCard';
 import addArtisanToList from '../actions/addArtisanToList';
 
@@ -13,7 +11,7 @@ const ArtisanList = (props) => {
   const {
     artisans, searchTerm, onRemove, page, pages, onPageChange
   } = props;
-  const { getTokenSilently } = useAuth0();
+  const { isAuthenticated, getTokenSilently } = props;
   const [processing, setProcessing] = useState(null);
 
   if (searchTerm && artisans && !artisans.length) {
@@ -81,6 +79,7 @@ const ArtisanList = (props) => {
 
   const artisanCard = (a, i) => !!a
     ? <ArtisanCard
+      isAuthenticated={isAuthenticated}
       key={a.artisan_id}
       onRemove={onRemove}
       onAdd={add}

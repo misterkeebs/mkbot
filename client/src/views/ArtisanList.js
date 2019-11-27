@@ -8,7 +8,6 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons'
 
-import { useAuth0 } from '../react-auth0-spa';
 
 import getUser from '../actions/getUser';
 import Loading from '../components/Loading';
@@ -50,18 +49,8 @@ const removeArtisan = async (token, listType, artisan_id) => {
 };
 
 const ArtisanList = (props) => {
-  const { listType, userId } = props;
+  const { listType, userId, user, getTokenSilently, isAuthenticated } = props;
   const history = useHistory();
-  const useAuth = useAuth0();
-  let authLoading = false;
-  let user, getTokenSilently;
-
-  if (!userId) {
-    authLoading = useAuth.loading;
-    user = useAuth.user;
-    getTokenSilently = useAuth.getTokenSilently;
-  }
-
   const [loading, setLoading] = useState(true);
   const [artisans, setArtisans] = useState([]);
   const [list, setList] = useState(null);
@@ -95,7 +84,7 @@ const ArtisanList = (props) => {
     });
   }, [getTokenSilently, listType, userId, history]);
 
-  if (authLoading || (!user && !userId)) {
+  if (!user && !userId) {
     return <Loading />;
   }
 
@@ -171,6 +160,8 @@ const ArtisanList = (props) => {
       <Row>
         <Col>
           <ArtisanListCmp
+            isAuthenticated={isAuthenticated}
+            getTokenSilently={getTokenSilently}
             artisans={artisans}
             onRemove={remove}
             processing={processing}

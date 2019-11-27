@@ -7,6 +7,7 @@ import { NavLink } from 'react-router-dom';
 import { useDebounce } from 'use-lodash-debounce'
 import slugify from 'slugify';
 
+import { useAuth0 } from '../react-auth0-spa';
 import DataLoading from '../components/DataLoading';
 import ArtisanList from '../components/ArtisanList';
 
@@ -34,6 +35,7 @@ const Artisans = () => {
   const [pages, setPages] = useState(null);
   const [loading, setLoading] = useState(false);
   const [makers, setMakers] = useState([]);
+  const { user, getTokenSilently, isAuthenticated } = useAuth0();
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
@@ -76,6 +78,9 @@ const Artisans = () => {
     ? <DataLoading />
     : (debouncedSearchTerm
         ? <ArtisanList
+            user={user}
+            getTokenSilently={getTokenSilently}
+            isAuthenticated={isAuthenticated}
             artisans={artisans}
             searchTerm={debouncedSearchTerm}
             pages={pages}

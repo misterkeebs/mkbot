@@ -18,13 +18,14 @@ class Artisan extends Base {
     const {
       order='maker, sculpt, colorway',
       page=1, perPage=30,
-      where=null,
       data=[],
     } = options;
+    let where = options.where;
     const fields = 'a.artisan_id, a.maker_id, m.name AS maker, a.sculpt, a.colorway, a.image, a.submitted_by, a.submitted_at';
     const table = 'artisans a';
     const joins = ['makers m ON m.maker_id = a.maker_id'];
     if (options.terms) {
+      where = where || [];
       where.push(`
         CONCAT(a.collection, ' ', a.sculpt, ' ', a.colorway) ILIKE $${where.length+1}
         OR CONCAT(a.colorway, ' ', a.colorway) ILIKE $${where.length+1}

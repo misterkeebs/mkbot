@@ -19,11 +19,11 @@ function formatName(data) {
 }
 
 const ArtisanCard = (props) => {
+  const { isAuthenticated } = props;
   const history = useHistory();
   const [showIcons, setShowIcons] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const { artisan, onRemove, onAdd, processing } = props;
-  const { isAuthenticated } = useAuth0();
 
   const cancel = () => {
     setShowConfirm(false);
