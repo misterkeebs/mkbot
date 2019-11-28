@@ -9,7 +9,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons'
 
 
-import getUser from '../actions/getUser';
 import Loading from '../components/Loading';
 import DataLoading from '../components/DataLoading';
 import ArtisanListCmp from '../components/ArtisanList';
@@ -60,20 +59,14 @@ const ArtisanList = (props) => {
   const [dbUser, setDbUser] = useState(null);
 
   useEffect(() => {
-    let result;
+    let promise;
     if (userId) {
-      result = getUserArtisans(userId, listType);
+      promise = getUserArtisans(userId, listType);
     } else {
-      result = getArtisans(getTokenSilently, listType);
-    }
-    const promises = [result];
-    if (!userId) {
-      promises.push(getUser(getTokenSilently));
-    } else {
-      promises.push(Promise.resolve());
+      promise = getArtisans(getTokenSilently, listType);
     }
 
-    Promise.all(promises).then(([{ list, artisans }, dbUser]) => {
+    promise.then(({ list, artisans, user: dbUser }) => {
       if (userId && !list) {
         history.push('/artisans?msg=List+not+found');
       }

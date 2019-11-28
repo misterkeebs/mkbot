@@ -29,7 +29,7 @@ class UserRoutes extends RouterConfig {
       return res.json({ list: null, artisans: null });
     }
     const artisans = await list.getArtisans();
-    res.json({ list, artisans });
+    res.json({ user, list, artisans });
   }
 
   async getPublicUserList(req, res, next) {
