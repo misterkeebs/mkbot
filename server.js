@@ -10,7 +10,7 @@ dotenv.config();
 const client = new Client({ connectionString: process.env.DATABASE_URL });
 
 const app = express();
-// app.use(morgan('dev'));
+app.use(morgan('dev'));
 app.use(cors());
 app.use(bodyParser.json());
 

@@ -6,7 +6,7 @@ import {
 } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faTrashAlt, faListAlt, faHeart, faImage,
+  faTrashAlt, faListAlt, faHeart, faImage, faTimes
 } from '@fortawesome/free-solid-svg-icons'
 
 import { useAuth0 } from "../react-auth0-spa";
@@ -14,6 +14,7 @@ import DataLoading from '../components/DataLoading';
 import getAuth from '../actions/getAuth';
 import addArtisanToList from '../actions/addArtisanToList';
 import removeArtisanFromList from '../actions/removeArtisanFromList';
+import UploadForm from '../components/UploadForm';
 
 const getArtisan = async (artisan_id) => {
   const response = await fetch(`/api/artisans/${artisan_id}`);
@@ -29,6 +30,7 @@ const Artisan = props => {
   const [artisan, setArtisan] = useState(null);
   const [list, setList] = useState(null);
   const [wishlist, setWishlist] = useState(null);
+  const [uploadVisible, setUploadVisible] = useState(false);
 
   const getUserList = getAuth(getTokenSilently, '/user/list');
   const getUserWishlist = getAuth(getTokenSilently, '/user/wishlist');
@@ -119,10 +121,10 @@ const Artisan = props => {
             </Button>
         }
         {' '}
-        {false && <Button color="primary">
+        <Button color="primary" onClick={_ => setUploadVisible(true)}>
           <FontAwesomeIcon icon={faImage} color="white" />{' '}
-          Add New Image for This Sculpt
-        </Button>}
+          Add Your Pic of This Sculpt
+        </Button>
       </Col>
     </Row>
   );
@@ -138,15 +140,19 @@ const Artisan = props => {
           </div>
         </Col>
       </Row>
-      <Row className="image">
+      {!uploadVisible && <Row className="image">
         <Col>
           <img
             alt={`${artisan.sculpt} ${artisan.colorway}`}
             src={artisan.image}
           />
         </Col>
-      </Row>
-      {isAuthenticated && actions}
+      </Row>}
+      {uploadVisible &&
+        <UploadForm
+          onCancel={_ => setUploadVisible(false)}
+        />}
+      {isAuthenticated && !uploadVisible && actions}
     </Container>
   )
 };
