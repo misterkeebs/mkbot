@@ -136,7 +136,9 @@ const Artisan = props => {
   const submitImage = async (image, data) => {
     const token = await getTokenSilently();
     const formData = new FormData();
-    formData.append('author', data.wantsCredit ? data.author : null);
+    if (data.wantsCredit) {
+      formData.append('author', data.author);
+    }
     formData.append('description', data.description);
     formData.append('artisan_id', artisan.artisan_id);
     formData.append('maker', artisan.maker);
