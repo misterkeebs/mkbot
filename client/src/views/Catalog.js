@@ -41,7 +41,7 @@ const Catalog = () => {
   const [pages, setPages] = useState(null);
   const [pageSize, setPageSize] = useState(null);
   const maker_id = slug.split('-')[0];
-  const maker = slug.split('-')[1];
+  const maker = slug.split(/-(.+)/)[1];
 
   useEffect(() => {
     if (sculpt) {
