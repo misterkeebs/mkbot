@@ -90,8 +90,8 @@ const Artisan = props => {
     </Row>
   );
 
-  const inList = list && list.artisans.find(a => a.artisan_id === artisan_id);
-  const inWishlist = wishlist && wishlist.artisans.find(a => a.artisan_id === artisan_id);
+  const inList = list && list.artisans&& list.artisans.find(a => a.artisan_id === artisan_id);
+  const inWishlist = wishlist && wishlist.artisans && wishlist.artisans.find(a => a.artisan_id === artisan_id);
   const actions = (
     <Row className="actions">
       <Col>
