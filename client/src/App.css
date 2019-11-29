@@ -189,12 +189,26 @@
   text-align: center;
 }
 
-.mkb-artisan-page .row.image img {
+.mkb-artisan-page .row.image img,
+.mkb-artisan-page .grid img {
   max-height: 400px;
 }
 
+.mkb-artisan-page .grid .col {
+  height: 105px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.mkb-artisan-page .grid .col div {
+  display: inline-block;
+}
+
 @media (max-width: 768px) {
-  .mkb-artisan-page .row.image img {
+  .mkb-artisan-page .row.image img,
+  .mkb-artisan-page .grid img {
     max-width: 70%;
     max-height: 100%;
   }
@@ -217,4 +231,20 @@
   text-align: center;
   font-size: 0.9em;
   color: #888;
+}
+
+.mkb-submissions .nav-link {
+  cursor: pointer;
+}
+
+.mkb-submissions .nav-link.active {
+  font-weight: bold;
+}
+
+.mkb-submissions .tab-pane {
+  padding: 10px;
+}
+
+.mkb-submissions .no-hits {
+  padding: 30px 10px;
 }

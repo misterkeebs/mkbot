@@ -3,6 +3,7 @@ const RouterConfig = require('./router-config');
 const _ = require('lodash');
 
 const SubmissionDb = require('../database/submission');
+const Image = require('../database/image');
 
 class Submission extends RouterConfig {
   routes() {
@@ -29,7 +30,8 @@ class Submission extends RouterConfig {
 
   async getSubmissions(req, res, next) {
     const submissions = await SubmissionDb.getQueue(this.client);
-    res.json(submissions);
+    const imageSubmissions = await Image.getQueue(this.client);
+    res.json({ submissions, imageSubmissions });
   }
 
   async addSubmission(req, res, next) {

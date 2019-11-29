@@ -44,7 +44,8 @@ exports.up = function(db) {
       }
     },
     approved_by: 'int',
-    approved_at: 'datetime',
+    processed_at: 'datetime',
+    status: 'string',
   });
 };
 

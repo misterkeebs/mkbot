@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import {
-  Table,
+  Table, Badge,
+  Nav, NavItem, NavLink, TabContent, TabPane
 } from 'reactstrap';
+import classnames from 'classnames';
 import _ from 'lodash';
 
 import DataLoading from '../components/DataLoading';
 import ReviewRow from '../components/ReviewRow';
+import ImageSubReview from '../components/ImageSubReview';
 import { useAuth0 } from "../react-auth0-spa";
 
 const getSubmissions = async (getTokenSilently) => {
@@ -31,10 +34,13 @@ const Review = () => {
   const { getTokenSilently } = useAuth0();
   const [loading, setLoading] = useState(true);
   const [submissions, setSubmissions] = useState([]);
+  const [imageSubmissions, setImageSubmissions] = useState([]);
+  const [activeTab, setActiveTab] = useState('1');
 
   useState(() => {
-    getSubmissions(getTokenSilently).then(subs => {
-      setSubmissions(subs);
+    getSubmissions(getTokenSilently).then(({ submissions, imageSubmissions }) => {
+      setSubmissions(submissions);
+      setImageSubmissions(imageSubmissions);
       setLoading(false);
     });
   });
@@ -70,7 +76,7 @@ const Review = () => {
     return response.json();
   };
 
-  return (
+  const artisans = submissions.length > 0 ? (
     <Table>
       <tbody>
         {submissions.map(s => <ReviewRow
@@ -82,6 +88,51 @@ const Review = () => {
                               />)}
       </tbody>
     </Table>
+  ) : <div className="no-hits">No artisan submissions to review</div>;
+
+  const images = imageSubmissions.length > 0
+    ? <ImageSubReview submissions={imageSubmissions} onUpdate={s => setImageSubmissions(s)} />
+    : <div className="no-hits">No image submissions to review</div>;
+
+  const toggle = tab => (activeTab !== tab) ? setActiveTab(tab) : null;
+
+  if ((submissions.length + imageSubmissions.length) < 1) {
+    return <div className="no-hits">Nothing to review</div>;
+  }
+
+  if (submissions.length === 0) {
+    setActiveTab('1');
+  }
+
+  return (
+    <div className="mkb-submissions">
+      <Nav tabs>
+        <NavItem>
+          <NavLink
+            className={classnames({ active: activeTab === '1' })}
+            onClick={() => { toggle('1') }}
+          >
+            Artisans <Badge color="secondary">{submissions.length}</Badge>
+          </NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink
+            className={classnames({ active: activeTab === '2' })}
+            onClick={() => { toggle('2') }}
+          >
+            Images <Badge color="secondary">{imageSubmissions.length}</Badge>
+          </NavLink>
+        </NavItem>
+      </Nav>
+      <TabContent activeTab={activeTab}>
+        <TabPane tabId="1">
+          {artisans}
+        </TabPane>
+        <TabPane tabId="2">
+          {images}
+        </TabPane>
+      </TabContent>
+    </div>
   );
 };
 

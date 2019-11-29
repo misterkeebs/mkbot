@@ -23,10 +23,10 @@ class Artisan extends Base {
       includeImages=false,
     } = options;
     let where = options.where;
-    const imageFields = includeImages ? '' : ', i.image AS extra_image, i.submitted_by as image_submitted_by, i.created_at as image_created_at';
+    const imageFields = includeImages ? ', i.image_id, i.image AS extra_image, i.submitted_by as image_submitted_by, i.created_at as image_created_at' : '';
     const fields = `a.artisan_id, a.maker_id, m.name AS maker, a.sculpt, a.colorway, a.image, a.submitted_by, a.submitted_at${imageFields}`;
     const table = 'artisans a';
-    const joins = ['makers m ON m.maker_id = a.maker_id'];
+    let joins = ['makers m ON m.maker_id = a.maker_id'];
     if (options.terms) {
       where = _.isArray(where) ? where : [where && where];
       where.push(`
@@ -37,8 +37,14 @@ class Artisan extends Base {
     }
     if (includeImages) {
       where = _.isArray(where) ? where : [where && where];
-      joins.push('images i ON i.artisan_id = a.artisan_id');
-      where.push('i.approved_at IS NOT NULL');
+      console.log('joins b', joins);
+      joins = joins.map(on => { return { on } });
+      console.log('joins', joins);
+      joins.push({
+        type: 'LEFT OUTER',
+        on: `images i ON a.artisan_id = i.artisan_id AND i.processed_at IS NOT NULL AND i.status = 'approved'`,
+      });
+      console.log('joins', joins);
     }
     console.log(' *** where', where);
     const results = await db.selectAll(client, {

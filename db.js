@@ -57,6 +57,18 @@ class DB {
     });
   }
 
+  parseJoins(joins) {
+    if (!_.isArray(joins)) return (joins ? ` JOIN ${joins}` : null);
+
+    return joins.map(j => {
+      if (_.isObject(j)) {
+        const { type, on } = j;
+        return ` ${type||''} JOIN ${on}`;
+      }
+      return ` JOIN ${j}`;
+    }).join(' ');
+  }
+
   selectAll(db, options) {
     const { fields, table, joins, order, page, perPage } = options;
     const { where, data } = parseWhere(options);
@@ -69,9 +81,7 @@ class DB {
     const orderClause = _.isArray(order)
       ? ` ORDER BY ${order.join(', ')}`
       : (order ? ` ORDER BY ${order}` : null);
-    const joinsClause = _.isArray(joins)
-      ? ` JOIN ${joins.join(' JOIN ')}`
-      : (joins ? ` JOIN ${joins}` : null);
+    const joinsClause = this.parseJoins(joins);
 
     const sqlArr = [];
     if (options.perPage) {

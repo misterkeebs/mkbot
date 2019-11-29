@@ -11,7 +11,7 @@ const createOrm = require('./orm-base');
 const classAdditions = {
   getQueue: async (client, options) => {
     const sql = `
-    SELECT
+  SELECT
       s.submission_id, s.created_at, s.user, u.name, u.nickname,
       s.image, s.maker, s.sculpt, s.colorway,
       s.author, s.anonymous,

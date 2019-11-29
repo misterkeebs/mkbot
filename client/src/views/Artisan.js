@@ -8,10 +8,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faTrashAlt, faListAlt, faHeart, faImage
 } from '@fortawesome/free-solid-svg-icons'
-import Sugar from 'sugar';
 import axios from 'axios';
 
 import { useAuth0 } from "../react-auth0-spa";
+import ArtisanGallery from '../components/ArtisanGallery';
 import DataLoading from '../components/DataLoading';
 import Alert from "../components/Alert";
 import UploadForm from '../components/UploadForm';
@@ -167,17 +167,9 @@ const Artisan = props => {
             </div>
           </Col>
         </Row>
-        {!uploadVisible && <Row className="image">
-          <Col>
-            <img
-              alt={`${artisan.sculpt} ${artisan.colorway}`}
-              src={artisan.image}
-            />
-            <div className="credit">
-              <b>{artisan.submitted_by}</b>
-              &nbsp;·&nbsp;
-              {artisan.submitted_at && Sugar.Date.relative(new Date(artisan.submitted_at))}
-            </div>
+        {!uploadVisible && <Row>
+          <Col sm="12" md={{ size: 6, offset: 3 }}>
+            <ArtisanGallery artisan={artisan} />
           </Col>
         </Row>}
         {uploadVisible &&

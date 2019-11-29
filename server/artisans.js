@@ -37,15 +37,13 @@ class ArtisanRoutes extends RouterConfig {
 
   async getArtisan(req, res, next) {
     const { artisan_id } = req.params;
-    // const artisan = await Artisan.find(this.client, { 'a.artisan_id': artisan_id });
-    // console.log('artisan', artisan);
     const rows = await Artisan.getAll(this.client, {
       where: { 'a.artisan_id': artisan_id },
       includeImages: true,
       perPage: null,
     });
 
-    console.log(' *** rows', rows, row[0]);
+    console.log(' *** rows', rows, rows[0]);
     if (!rows[0]) {
       return res.status(404).json({ error: 'Not found' });
     }
@@ -55,8 +53,9 @@ class ArtisanRoutes extends RouterConfig {
       'image', 'submitted_by', 'submitted_at',
     ]);
     const artisan = new Artisan(this.client, artData);
-    artisan.images = rows.map(r => {
+    artisan.images = rows.filter(r => r.image_id).map(r => {
       const image = {
+        image_id: r.image_id,
         image: r.extra_image,
         submitted_by: r.image_submitted_by,
         created_at: r.image_created_at,
