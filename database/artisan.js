@@ -1,5 +1,6 @@
-const Base = require('./base');
+const _ = require('lodash');
 
+const Base = require('./base');
 const db = require('../db');
 const table = 'artisans';
 
@@ -19,19 +20,27 @@ class Artisan extends Base {
       order='maker, sculpt, colorway',
       page=1, perPage=30,
       data=[],
+      includeImages=false,
     } = options;
     let where = options.where;
-    const fields = 'a.artisan_id, a.maker_id, m.name AS maker, a.sculpt, a.colorway, a.image, a.submitted_by, a.submitted_at';
+    const imageFields = includeImages ? '' : ', i.image AS extra_image, i.submitted_by as image_submitted_by, i.created_at as image_created_at';
+    const fields = `a.artisan_id, a.maker_id, m.name AS maker, a.sculpt, a.colorway, a.image, a.submitted_by, a.submitted_at${imageFields}`;
     const table = 'artisans a';
     const joins = ['makers m ON m.maker_id = a.maker_id'];
     if (options.terms) {
-      where = where || [];
+      where = _.isArray(where) ? where : [where && where];
       where.push(`
         CONCAT(a.collection, ' ', a.sculpt, ' ', a.colorway) ILIKE $${where.length+1}
         OR CONCAT(a.colorway, ' ', a.colorway) ILIKE $${where.length+1}
       `);
       data.push(`%${options.terms}%`);
     }
+    if (includeImages) {
+      where = _.isArray(where) ? where : [where && where];
+      joins.push('images i ON i.artisan_id = a.artisan_id');
+      where.push('i.approved_at IS NOT NULL');
+    }
+    console.log(' *** where', where);
     const results = await db.selectAll(client, {
       fields, table, order, joins, page, perPage, where, data
     });

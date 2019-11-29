@@ -46,6 +46,17 @@ class DB {
     });
   }
 
+  processWhereArray(where) {
+    return where.map(w => {
+      if (_.isObject(w)) {
+        const keys = Object.keys(w);
+        const clause = keys.map(k => `${k} = ${w[k]}`);
+        return `(${clause.join(' AND ')})`;
+      }
+      return w;
+    });
+  }
+
   selectAll(db, options) {
     const { fields, table, joins, order, page, perPage } = options;
     const { where, data } = parseWhere(options);
@@ -53,13 +64,13 @@ class DB {
     const fieldList = _.isArray(fields)
       ? fields.join(', ') : (fields ? fields : '*');
     const whereClause = _.isArray(where)
-      ? ` WHERE ${where.join(' AND ')} `
+      ? ` WHERE ${this.processWhereArray(where).join(' AND ')} `
       : (where ? ` WHERE ${where}` : null);
     const orderClause = _.isArray(order)
       ? ` ORDER BY ${order.join(', ')}`
       : (order ? ` ORDER BY ${order}` : null);
     const joinsClause = _.isArray(joins)
-      ? ` JOIN ${joins.join(', ')}`
+      ? ` JOIN ${joins.join(' JOIN ')}`
       : (joins ? ` JOIN ${joins}` : null);
 
     const sqlArr = [];
