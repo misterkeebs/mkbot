@@ -28,7 +28,7 @@ class Artisan extends Base {
     const table = 'artisans a';
     let joins = ['makers m ON m.maker_id = a.maker_id'];
     if (options.terms) {
-      where = _.isArray(where) ? where : [where && where];
+      where = _.isArray(where) ? where : (where ? [where] : []);
       where.push(`
         CONCAT(a.collection, ' ', a.sculpt, ' ', a.colorway) ILIKE $${where.length+1}
         OR CONCAT(a.colorway, ' ', a.colorway) ILIKE $${where.length+1}
@@ -36,7 +36,7 @@ class Artisan extends Base {
       data.push(`%${options.terms}%`);
     }
     if (includeImages) {
-      where = _.isArray(where) ? where : [where && where];
+      where = _.isArray(where) ? where : (where ? [where] : []);
       console.log('joins b', joins);
       joins = joins.map(on => { return { on } });
       console.log('joins', joins);
