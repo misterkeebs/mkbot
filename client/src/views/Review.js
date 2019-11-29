@@ -42,6 +42,9 @@ const Review = () => {
       setSubmissions(submissions);
       setImageSubmissions(imageSubmissions);
       setLoading(false);
+      if (submissions.length === 0) {
+        setActiveTab('2');
+      }
     });
   });
 
@@ -98,10 +101,6 @@ const Review = () => {
 
   if ((submissions.length + imageSubmissions.length) < 1) {
     return <div className="no-hits">Nothing to review</div>;
-  }
-
-  if (submissions.length === 0) {
-    setActiveTab('1');
   }
 
   return (
