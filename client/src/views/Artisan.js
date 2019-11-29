@@ -6,15 +6,18 @@ import {
 } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faTrashAlt, faListAlt, faHeart, faImage, faTimes
+  faTrashAlt, faListAlt, faHeart, faImage
 } from '@fortawesome/free-solid-svg-icons'
+import Sugar from 'sugar';
+import axios from 'axios';
 
 import { useAuth0 } from "../react-auth0-spa";
 import DataLoading from '../components/DataLoading';
+import Alert from "../components/Alert";
+import UploadForm from '../components/UploadForm';
 import getAuth from '../actions/getAuth';
 import addArtisanToList from '../actions/addArtisanToList';
 import removeArtisanFromList from '../actions/removeArtisanFromList';
-import UploadForm from '../components/UploadForm';
 
 const getArtisan = async (artisan_id) => {
   const response = await fetch(`/api/artisans/${artisan_id}`);
@@ -31,6 +34,7 @@ const Artisan = props => {
   const [list, setList] = useState(null);
   const [wishlist, setWishlist] = useState(null);
   const [uploadVisible, setUploadVisible] = useState(false);
+  const [message, setMessage] = useState(null);
 
   const getUserList = getAuth(getTokenSilently, '/user/list');
   const getUserWishlist = getAuth(getTokenSilently, '/user/wishlist');
@@ -129,31 +133,61 @@ const Artisan = props => {
     </Row>
   );
 
+  const submitImage = async (image, data) => {
+    const token = await getTokenSilently();
+    const formData = new FormData();
+    formData.append('author', data.wantsCredit ? data.author : null);
+    formData.append('description', data.description);
+    formData.append('artisan_id', artisan.artisan_id);
+    formData.append('maker', artisan.maker);
+    formData.append('sculpt', artisan.sculpt);
+    formData.append('colorway', artisan.colorway);
+    formData.append('image', image);
+    await axios.put('/api/images', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    setUploadVisible(false);
+    setMessage(`Thanks for your submission! We'll notify you when it gets processed.`);
+  }
+
+  const alert = message && <Alert color="success" message={message} />
   return (
-    <Container className="mkb-artisan-page">
-      {breadcrumbs}
-      <Row className="title">
-        <Col>
-          <h1>{artisan.sculpt} {artisan.colorway}</h1>
-          <div className="maker">
-            by <NavLink to={artisan.makerLink}>{artisan.maker}</NavLink>
-          </div>
-        </Col>
-      </Row>
-      {!uploadVisible && <Row className="image">
-        <Col>
-          <img
-            alt={`${artisan.sculpt} ${artisan.colorway}`}
-            src={artisan.image}
-          />
-        </Col>
-      </Row>}
-      {uploadVisible &&
-        <UploadForm
-          onCancel={_ => setUploadVisible(false)}
-        />}
-      {isAuthenticated && !uploadVisible && actions}
-    </Container>
+    <>
+      <Container className="mkb-artisan-page">
+        {breadcrumbs}
+        {alert}
+        <Row className="title">
+          <Col>
+            <h1>{artisan.sculpt} {artisan.colorway}</h1>
+            <div className="maker">
+              by <NavLink to={artisan.makerLink}>{artisan.maker}</NavLink>
+            </div>
+          </Col>
+        </Row>
+        {!uploadVisible && <Row className="image">
+          <Col>
+            <img
+              alt={`${artisan.sculpt} ${artisan.colorway}`}
+              src={artisan.image}
+            />
+            <div className="credit">
+              <b>{artisan.submitted_by}</b>
+              &nbsp;·&nbsp;
+              {artisan.submitted_at && Sugar.Date.relative(new Date(artisan.submitted_at))}
+            </div>
+          </Col>
+        </Row>}
+        {uploadVisible &&
+          <UploadForm
+            onSave={submitImage}
+            onCancel={_ => setUploadVisible(false)}
+          />}
+        {isAuthenticated && !uploadVisible && actions}
+      </Container>
+    </>
   )
 };
 

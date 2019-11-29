@@ -193,6 +193,14 @@
   max-height: 400px;
 }
 
+@media (max-width: 768px) {
+  .mkb-artisan-page .row.image img {
+    max-width: 70%;
+    max-height: 100%;
+  }
+}
+
+
 .mkb-artisan-page .row.actions {
   margin: 10px 0;
 }
@@ -203,4 +211,10 @@
 
 .mkb-artisan-page .maker {
   margin: -10px 0 40px;
+}
+
+.mkb-artisan-page .credit {
+  text-align: center;
+  font-size: 0.9em;
+  color: #888;
 }

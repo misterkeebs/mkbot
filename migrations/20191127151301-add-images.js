@@ -43,6 +43,8 @@ exports.up = function(db) {
         mapping: 'user_id'
       }
     },
+    approved_by: 'int',
+    approved_at: 'datetime',
   });
 };
 
