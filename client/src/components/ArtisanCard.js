@@ -10,7 +10,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import Sugar from 'sugar';
 
-import { useAuth0 } from "../react-auth0-spa";
 import DataLoading from './DataLoading';
 
 function formatName(data) {
