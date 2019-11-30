@@ -10,23 +10,7 @@ import slugify from 'slugify';
 import { useAuth0 } from '../react-auth0-spa';
 import DataLoading from '../components/DataLoading';
 import ArtisanList from '../components/ArtisanList';
-
-const search = async (terms, page=1) => {
-  const response = await fetch(`/api/artisans/?q=${terms}&page=${page}`);
-  const artisans = await response.json();
-  const headers = response.headers;
-  return {
-    artisans,
-    page: headers.get('X-Pagination-Page'),
-    pages: headers.get('X-Pagination-TotalPages'),
-    pageSize: headers.get('X-Pagination-PerPage'),
-  };
-};
-
-const getMakers = async () => {
-  const response = await fetch(`/api/makers`);
-  return response.json();
-};
+import ErrorMessage from '../components/ErrorMessage';
 
 const Artisans = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -35,9 +19,36 @@ const Artisans = () => {
   const [pages, setPages] = useState(null);
   const [loading, setLoading] = useState(false);
   const [makers, setMakers] = useState([]);
+  const [error, setError] = useState(null);
   const { user, getTokenSilently, isAuthenticated } = useAuth0();
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  const search = async (terms, page=1) => {
+    try {
+      const response = await fetch(`/api/artisans/?q=${terms}&page=${page}`);
+      const artisans = await response.json();
+      const headers = response.headers;
+      return {
+        artisans,
+        page: headers.get('X-Pagination-Page'),
+        pages: headers.get('X-Pagination-TotalPages'),
+        pageSize: headers.get('X-Pagination-PerPage'),
+      };
+    } catch (error) {
+      setError(error);
+    }
+  };
+
+  const getMakers = async () => {
+    try {
+      const response = await fetch(`/api/makers`);
+      return response.json();
+    } catch (error) {
+      console.error('Error loading makers', error);
+      setError(error);
+    }
+  };
 
   const searchByTerm = async (term, page) => {
     const { artisans, pages } = await search(debouncedSearchTerm, page);
@@ -65,10 +76,14 @@ const Artisans = () => {
           setArtisans([]);
           setLoading(false);
         }
-      })
+      }).catch(error => setError(error));
     },
     [debouncedSearchTerm, page]
   );
+
+  if (error) {
+    return <ErrorMessage error={error} />;
+  }
 
   const onPageChange = (newPage) => {
     searchByTerm(debouncedSearchTerm, newPage);

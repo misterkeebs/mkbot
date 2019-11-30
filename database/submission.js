@@ -1,8 +1,7 @@
 const _ = require('lodash');
 const dedent = require('dedent');
-const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+const Email = require('./email');
 const Artisan = require('./artisan');
 const Maker = require('./maker');
 const User = require('./user');
@@ -70,36 +69,26 @@ const instanceAdditions = {
   },
 
   sendApprovalEmail: async function(user, artisan) {
-    const email = {
-      to: this.user,
-      from: { name: 'MrKeebs Artisans', email: 'artisans@mrkeebs.com' },
-      subject: `Your submission for ${this.sculpt} ${this.colorway} was approved!`,
-      text: dedent`
-      Hey there,
+    Email.send(user,
+     `Your submission for ${this.sculpt} ${this.colorway} was approved!`,
+      dedent`
+        Hey there,
 
-      One of our reviewers just approved your submission for the
-      ${this.sculpt} ${this.colorway} keycap from ${this.maker || this.newMaker}.
+        One of our reviewers just approved your submission for the
+        ${this.sculpt} ${this.colorway} keycap from ${this.maker || this.newMaker}.
 
-      You can see it here:
-      ${process.env.BASE_URL}/artisans/${artisan.artisan_id}-${encodeURI(`${this.maker || this.newMaker}-${this.sculpt}-${this.colorway}`)}
+        You can see it here:
+        ${process.env.BASE_URL}/artisans/${artisan.artisan_id}-${encodeURI(`${this.maker || this.newMaker}-${this.sculpt}-${this.colorway}`)}
 
-      I wanted to thank you personally for helping we grow this community driven database!
+        I wanted to thank you personally for helping we grow this community driven database!
 
-      In an upcoming release we will add a badge to your account with the number
-      of contributions you did :)
+        In an upcoming release we will add a badge to your account with the number
+        of contributions you did :)
 
-      Best,
+        Best,
 
-      MrKeebs
-      `,
-    };
-
-    try {
-      return await sgMail.send(email);
-    } catch (err) {
-      console.error('Error sending email', err);
-      return err;
-    }
+        MrKeebs
+    `);
   }
 };
 

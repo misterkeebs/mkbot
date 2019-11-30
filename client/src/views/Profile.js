@@ -16,12 +16,17 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [name, setName] = useState(null);
   const [nickname, setNickname] = useState(null);
+  const [notifications, setNotifications] = useState(true);
   const [info, setInfo] = useState(null);
-  const [saving, setSaving] = useState(false);
+  const [saving, setSaving] = useState(null);
 
   useState(() => {
     getUser(getTokenSilently).then(user => {
+      console.log('user', user);
       setUser(user);
+      setName(user.name || profile.name);
+      setNickname(user.nickname || profile.nickname);
+      setNotifications(user.notifications);
       setLoadingUser(false);
     });
   }, [getTokenSilently]);
@@ -34,12 +39,10 @@ const Profile = () => {
     return <DataLoading />
   }
 
-  if (!name) setName(user.name || profile.name);
-  if (!nickname) setNickname(user.nickname || profile.nickname);
-
   const handleSave = async () => {
     user.name = name;
     user.nickname = nickname;
+    user.notifications = notifications;
 
     setSaving(true);
     try {
@@ -82,6 +85,17 @@ const Profile = () => {
           disabled={saving}
           onChange={e => setNickname(e.target.value)}
         />
+      </FormGroup>
+      <FormGroup check>
+        <Label for="notifications">
+          <Input
+            type="checkbox" name="notifications" id="notifications"
+            autoComplete="off"
+            disabled={saving} checked={notifications}
+            onChange={e => setNotifications(e.target.checked)}
+          />{' '}
+          Receive email notifications
+        </Label>
       </FormGroup>
 
       <Button onClick={handleSave} disabled={saving}>

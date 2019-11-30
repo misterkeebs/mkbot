@@ -1,9 +1,16 @@
 const sgMail = require('@sendgrid/mail');
 const { log } = require('../debug');
+const _ = require('lodash');
+
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 class Email {
   async send(to, subject, body) {
+    // we allow using a User instance
+    if (_.isObject(to)) {
+      if (to.notifications === false) return;
+      to = to.email;
+    }
     log(`Email "${subject}" to`, to);
     const email = {
       to,
