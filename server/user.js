@@ -22,8 +22,8 @@ class UserRoutes extends RouterConfig {
   }
 
   async getUserList(type, req, res, next) {
-    const { userProfile } = this;
-    const user = await User.findOrCreate(this.client, { email: userProfile.email });
+    const { userEmail } = this;
+    const user = await User.findOrCreate(this.client, { email: userEmail });
     const list = await List.findByUser(this.client, type, user.user_id);
     if (!list) {
       return res.json({ list: null, artisans: null });

@@ -41,7 +41,7 @@ const classAdditions = {
 };
 
 const instanceAdditions = {
-  approve: async function(approver, profile) {
+  approve: async function(approver) {
     const data = _.pick(this, ['collection', 'sculpt', 'colorway', 'image']);
     data.submitted_by = this.anonymous ? 'Anonymous' : this.author;
     data.submitted_at = this.created_at;
@@ -51,14 +51,14 @@ const instanceAdditions = {
     data.maker_id = maker.maker_id;
 
     const artisan = new Artisan(this.client, data);
-    await artisan.insert('artisans', data);
+    const newArtisan = await artisan.insert('artisans', data);
 
     this.processed_at = new Date();
     this.processed_by = approver.user_id;
     this.status = 'approved';
     const res = await this.save();
 
-    await this.sendApprovalEmail(approver);
+    await this.sendApprovalEmail(approver, newArtisan);
     return res;
   },
 
@@ -69,7 +69,7 @@ const instanceAdditions = {
     return this.save();
   },
 
-  sendApprovalEmail: async function(user) {
+  sendApprovalEmail: async function(user, artisan) {
     const email = {
       to: this.user,
       from: { name: 'MrKeebs Artisans', email: 'artisans@mrkeebs.com' },
@@ -79,6 +79,9 @@ const instanceAdditions = {
 
       One of our reviewers just approved your submission for the
       ${this.sculpt} ${this.colorway} keycap from ${this.maker || this.newMaker}.
+
+      You can see it here:
+      ${process.env.BASE_URL}/artisans/${artisan.artisan_id}-${encodeURI(`${this.maker || this.newMaker}-${this.sculpt}-${this.colorway}`)}
 
       I wanted to thank you personally for helping we grow this community driven database!
 

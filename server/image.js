@@ -41,7 +41,7 @@ class ImageRoutes extends RouterConfig {
     if (!sub) {
       return res.status(404).json({ message: 'Not found' });
     }
-    await sub.approve(this.user, this.userProfile);
+    await sub.approve(this.user);
     res.json(sub);
   }
 
@@ -51,7 +51,7 @@ class ImageRoutes extends RouterConfig {
     if (!sub) {
       return res.status(404).json({ message: 'Not found' });
     }
-    await sub.reject(this.user, this.userProfile);
+    await sub.reject(this.user);
     res.json(sub);
   }
 }

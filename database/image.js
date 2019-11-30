@@ -55,7 +55,7 @@ const instanceAdditions = {
       ${artisan.sculpt} ${artisan.colorway} keycap from ${artisan.maker}.
 
       You can see it here:
-      ${process.env.BASE_URL}/artisans/${artisan.artisan_id}-${encodeURI(`${artisan.maker} ${artisan.sculpt} ${artisan.colorway}`)}
+      ${process.env.BASE_URL}/artisans/${artisan.artisan_id}-${encodeURI(`${artisan.maker}-${artisan.sculpt}-${artisan.colorway}`)}
 
       I wanted to thank you personally for helping we grow this community driven database!
 

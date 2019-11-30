@@ -16,6 +16,29 @@
 
 [1] https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
 
+You'll also need to add a Rule to your auth0 account as follows:
+
+```javascript
+function (user, context, callback) {
+  const namespace = 'http://a.mrkeebs.com';
+  const assignedRoles = (context.authorization || {}).roles;
+
+  let idTokenClaims = context.idToken || {};
+  let accessTokenClaims = context.accessToken || {};
+
+  idTokenClaims[`${namespace}/roles`] = assignedRoles;
+  accessTokenClaims[`${namespace}/roles`] = assignedRoles;
+
+  idTokenClaims[`${namespace}/email`] = user.email;
+  accessTokenClaims[`${namespace}/email`] = user.email;
+
+  context.idToken = idTokenClaims;
+  context.accessToken = accessTokenClaims;
+
+  callback(null, user, context);
+}
+```
+
 ### Installation
 
 Clone the repo

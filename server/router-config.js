@@ -21,9 +21,18 @@ class RouterConfig {
     this.app.get(`/api${path}`, fn);
   }
 
-  async addUser(req) {
-    this.userProfile = await this.fetchUserProfile(req);
-    this.user = await User.findOrCreate(this.client, { email: this.userProfile.email });
+  async addUser(req, res) {
+    try {
+      if (req.user) {
+        this.userEmail = req.user['http://a.mrkeebs.com/email'];
+        this.user = await User.findOrCreate(this.client, { email: this.userEmail });
+      }
+      return true;
+    } catch (error) {
+      console.error('Erro fetching user profile:\n', error);
+      res.status(500).json({ message: error.message, error });
+      return false;
+    }
   }
 
   methodWithAuth(method, path, param1, param2) {
@@ -47,14 +56,14 @@ class RouterConfig {
 
   async putAuth(path, fn) {
     this.app.put(`/api${path}`, this.jwtCheck, async (req, res, next) => {
-      await this.addUser(req);
+      if (!await this.addUser(req, res)) return;
       return fn(req, res, next);
     });
   }
 
   async deleteAuth(path, fn) {
     this.app.delete(`/api${path}`, this.jwtCheck, async (req, res, next) => {
-      await this.addUser(req);
+      if (!await this.addUser(req, res)) return;
       return fn(req, res, next);
     });
   }
@@ -76,19 +85,10 @@ class RouterConfig {
 
     this.uploadPrefix = `https://${bucket}.s3.amazonaws.com/`;
     const withUpload = upload.fields([{ name: metadata.field, maxCount: 1 }]);
-    this.app.put(`/api${path}`, withUpload, async (req, res, next) => {
-      await this.addUser(req);
+    this.app.put(`/api${path}`, withUpload, this.jwtCheck, async (req, res, next) => {
+      if (!await this.addUser(req, res)) return;
       return fn(req, res, next);
     });
-  }
-
-  async fetchUserProfile(req) {
-    const url = `${process.env.AUTH0_URL}/userinfo`;
-    const res = await axios({
-      url,
-      headers: { authorization: req.headers.authorization },
-    });
-    return res.data;
   }
 
   resolve(param1, param2) {
@@ -97,7 +97,7 @@ class RouterConfig {
     let checkRole = null;
 
     const method = async (req, res, next) => {
-      await this.addUser(req);
+      if (!await this.addUser(req, res)) return;
       return fn(req, res, next);
     };
 
