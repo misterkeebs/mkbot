@@ -57,7 +57,13 @@ const instanceAdditions = {
     this.status = 'approved';
     const res = await this.save();
 
-    await this.sendApprovalEmail(approver, newArtisan);
+    const sender = await User.find(this.client, { user_id: this.user_id });
+    if (!sender) {
+      console.error(`Sender for submission ${this.submission_id} not found: ${this.user_id}`);
+      return res;
+    }
+
+    await this.sendApprovalEmail(sender, newArtisan);
     return res;
   },
 
@@ -69,6 +75,7 @@ const instanceAdditions = {
   },
 
   sendApprovalEmail: async function(user, artisan) {
+    console.log('sending approval to', user);
     Email.send(user,
      `Your submission for ${this.sculpt} ${this.colorway} was approved!`,
       dedent`

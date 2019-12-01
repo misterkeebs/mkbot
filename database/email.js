@@ -28,7 +28,7 @@ class Email {
     try {
       return await sgMail.send(email);
     } catch (err) {
-      console.error('Error sending email', err, err.response.body);
+      console.error('Error sending email', err);
       return err;
     }
   }

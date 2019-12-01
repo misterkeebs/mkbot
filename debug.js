@@ -7,17 +7,17 @@ class Debug {
 
   static log(...s) {
     if (!is(Debug.DEBUG)) return;
-    console.log(s);
+    console.log(...s);
   }
 
   static info(...s) {
     if (!is(Debug.INFO)) return;
-    console.info(s);
+    console.info(...s);
   }
 
   static error(...s) {
     if (!is(Debug.ERROR)) return;
-    console.error(s);
+    console.error(...s);
   }
 }
 
