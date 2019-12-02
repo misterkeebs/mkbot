@@ -1,21 +1,26 @@
 import React, { useState } from 'react';
 import {
-  Container, Row, Col, Button,
+  Table, Container, Row, Col, Button,
   FormGroup, Label, Input,
 } from 'reactstrap';
 
 import { useAuth0 } from '../react-auth0-spa';
 import DataLoading from '../components/DataLoading';
+import Alert from "../components/Alert";
 import getUser from '../actions/getUser';
+import SubmissionEditor from './SubmissionEditor';
+import axios from 'axios';
 
 const MultiCapUpload = props => {
   const { getTokenSilently } = useAuth0();
 
   const [loading, setLoading] = useState(false);
-  const [images, setImages] = useState([]);
-  const [previews, setPreviews] = useState([]);
+  const [images, setImages] = useState(null);
+  const [previews, setPreviews] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const [wantsCredit, setWantsCredit] = useState(true);
   const [author, setAuthor] = useState('');
+  const [message, setMessage] = useState(null);
 
   useState(() => {
     setLoading(true);
@@ -26,6 +31,19 @@ const MultiCapUpload = props => {
   }, []);
 
   if (loading) return <DataLoading />;
+  const alert = message && <Alert color="success" message={message} />
+
+  const extractInfo = fileName => {
+    const parts = fileName.split('.')[0].split('-');
+    console.log('parts', parts);
+    if (parts.length < 2) {
+      return {};
+    }
+    if (parts.length < 3) {
+      return { sculpt: parts[0], colorway: parts[1] };
+    }
+    return { maker: parts[0], sculpt: parts[1], colorway: parts[2] };
+  };
 
   const imageHandler = async (e) => {
     const { files } = e.target;
@@ -40,8 +58,13 @@ const MultiCapUpload = props => {
       reader.onloadend = async () => {
         previews.push(reader.result);
         if (previews.length === files.length) {
+          const previewData = Array.from(files).map((f, i) => {
+            const data = extractInfo(f.name);
+            data.image = previews[i];
+            return data;
+          });
           setImages(images);
-          setPreviews(previews);
+          setPreviews(previewData);
           setLoading(false);
         }
       };
@@ -65,14 +88,104 @@ const MultiCapUpload = props => {
     </Row>
   );
 
+  const submit = async () => {
+    setUploading(true);
+    const token = await getTokenSilently();
+    const formData = new FormData();
+    previews.forEach((p, i) => {
+      formData.append('maker', p.newMaker || p.maker);
+      formData.append('sculpt', p.sculpt);
+      formData.append('colorway', p.colorway);
+      formData.append('image', images[i]);
+    })
+    formData.append('anonymous', !wantsCredit);
+    if (wantsCredit) {
+      formData.append('author', author);
+    }
+    await axios.put('/api/submissions', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    setUploading(false);
+    setImages(null);
+    setMessage(`Thanks for your submission! We'll notify you when it gets processed.`)
+  };
+
+  const previewEl = previews && (
+    <>
+      <Row>
+        <Col>
+          <Table className="mkb-multi-image">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Info</th>
+              </tr>
+            </thead>
+            <tbody>
+              {previews.map(p => (
+                <tr>
+                  <td>
+                    <img src={p.image} alt="Preview" />
+                  </td>
+                  <td width="100%">
+                    <SubmissionEditor submission={p} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <FormGroup check>
+            <Label for="wantsCredit">
+              <Input
+                type="checkbox" name="wantsCredit" id="wantsCredit"
+                autoComplete="off"
+                disabled={uploading} checked={wantsCredit}
+                onChange={e => setWantsCredit(e.target.checked)}
+              />{' '}
+              Credit me for the submission
+            </Label>
+          </FormGroup>
+          {wantsCredit && <FormGroup>
+            <Label for="author">How do you want to be credited as?</Label>
+            <Input
+              type="text" name="author" id="author"
+              autoComplete="off"
+              value={author} disabled={uploading}
+              onChange={e => setAuthor(e.target.value)}
+            />
+          </FormGroup>}
+          {!wantsCredit && <FormGroup>
+            <Label>This submission will be sent anonymously.</Label>
+          </FormGroup>}
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Button color="primary" onClick={submit}>
+            Submit
+          </Button>
+        </Col>
+      </Row>
+    </>
+  );
+
   console.log('images', images);
   console.log('previews', previews);
 
-
   return (
-    <div>
-      {formEl}
-    </div>
+    <>
+      {alert}
+      <Container>
+        {previews ? previewEl : formEl}
+      </Container>
+    </>
   );
 };
 

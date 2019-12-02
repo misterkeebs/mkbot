@@ -248,3 +248,7 @@
 .mkb-submissions .no-hits {
   padding: 30px 10px;
 }
+
+.mkb-multi-image img {
+  max-width: 200px;
+}
