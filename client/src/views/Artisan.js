@@ -63,7 +63,7 @@ const Artisan = props => {
   const addTo = (list, name) => async _ => {
     const token = await getTokenSilently();
     setProcessing(name);
-    await addArtisanToList(token, list, artisan.artisan_id);
+    await addArtisanToList(token, name, artisan.artisan_id);
     list.artisans.push({artisan_id: artisan.artisan_id});
     setProcessing(null);
   };
@@ -71,7 +71,7 @@ const Artisan = props => {
   const removeFrom = (list, name) => async _ => {
     const token = await getTokenSilently();
     setProcessing(name);
-    await removeArtisanFromList(token, list, artisan.artisan_id);
+    await removeArtisanFromList(token, name, artisan.artisan_id);
     const idx = list.artisans.findIndex(a => a.artisan_id === artisan.artisan_id);
     list.artisans.splice(idx, 1);
     setProcessing(null);
