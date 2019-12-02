@@ -11,6 +11,7 @@ import { useAuth0 } from '../react-auth0-spa';
 import Alert from "../components/Alert";
 import DataLoading from '../components/DataLoading';
 import ArtisanList from '../components/ArtisanList';
+import MultiCapUpload from '../components/MultiCapUpload';
 import getUser from '../actions/getUser';
 
 const getMakers = async () => {
@@ -64,17 +65,18 @@ const Submission = () => {
     setImage(e.target.files[0]);
   };
 
-  const uploadForm = !image && (
-    <Col>
-      <FormGroup className="mkb-files">
-        <Label for="image">
-          To start the submission process, select or drag the
-          artisan image to the box below:
-        </Label>
-        <Input type="file" name="file" id="image" onChange={imageHandler} />
-      </FormGroup>
-    </Col>
-  );
+  const uploadForm = !image && <MultiCapUpload />;
+  // (
+  //   <Col>
+  //     <FormGroup className="mkb-files">
+  //       <Label for="image">
+  //         To start the submission process, select or drag the
+  //         artisan image to the box below:
+  //       </Label>
+  //       <Input type="file" name="file" id="image" onChange={imageHandler} />
+  //     </FormGroup>
+  //   </Col>
+  // );
 
   if (loading) return <DataLoading />;
 
