@@ -21,6 +21,7 @@ const MultiCapUpload = props => {
   const [wantsCredit, setWantsCredit] = useState(true);
   const [author, setAuthor] = useState('');
   const [message, setMessage] = useState(null);
+  const [processing, setProcessing] = useState(null);
 
   useState(() => {
     setLoading(true);
@@ -91,26 +92,31 @@ const MultiCapUpload = props => {
   const submit = async () => {
     setUploading(true);
     const token = await getTokenSilently();
-    const formData = new FormData();
-    previews.forEach((p, i) => {
+
+    for (let i = 0; i < previews.length; i++) {
+      const p = previews[i];
+      setProcessing(i);
+      const formData = new FormData();
       formData.append('maker', p.newMaker || p.maker);
       formData.append('sculpt', p.sculpt);
       formData.append('colorway', p.colorway);
       formData.append('image', images[i]);
-    })
-    formData.append('anonymous', !wantsCredit);
-    if (wantsCredit) {
-      formData.append('author', author);
-    }
-    await axios.put('/api/submissions', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      formData.append('anonymous', !wantsCredit);
+      if (wantsCredit) {
+        formData.append('author', author);
+      }
+      await axios.put('/api/submissions', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    };
+
+    setProcessing(null);
     setUploading(false);
     setImages(null);
-    setMessage(`Thanks for your submission! We'll notify you when it gets processed.`)
+    setMessage(`Thanks for your submissions! We'll notify you when it gets processed.`)
   };
 
   const previewEl = previews && (
@@ -125,13 +131,15 @@ const MultiCapUpload = props => {
               </tr>
             </thead>
             <tbody>
-              {previews.map(p => (
+              {previews.map((p, i) => (
                 <tr>
                   <td>
                     <img src={p.image} alt="Preview" />
                   </td>
                   <td width="100%">
-                    <SubmissionEditor submission={p} />
+                    {processing === i
+                      ? <DataLoading />
+                      : <SubmissionEditor submission={p} disabled={uploading} />}
                   </td>
                 </tr>
               ))}

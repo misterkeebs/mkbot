@@ -53,6 +53,7 @@ export default class SubmissionEditor extends React.Component {
 
   render() {
     const { submission, makers, loading } = this.state;
+    const { disabled } = this.props;
 
     if (loading) {
       return <DataLoading />;
@@ -67,7 +68,7 @@ export default class SubmissionEditor extends React.Component {
             id="maker"
             name="maker"
             value={submission.maker}
-            disabled={loading}
+            disabled={loading || disabled}
             onChange={this.update('maker').bind(this)}
           >
             {makers.map((m, i) => <option key={i}>{m.name}</option>)}
@@ -81,7 +82,7 @@ export default class SubmissionEditor extends React.Component {
               id="newMaker"
               name="newMaker"
               value={submission.newMaker}
-              disabled={loading}
+              disabled={loading || disabled}
               onChange={this.update('newMaker').bind(this)}
             />
           </FormGroup>
@@ -93,7 +94,7 @@ export default class SubmissionEditor extends React.Component {
             id="sculpt"
             name="sculpt"
             value={submission.sculpt}
-            disabled={loading}
+            disabled={loading || disabled}
             onChange={this.update('sculpt').bind(this)}
           />
         </FormGroup>
@@ -104,7 +105,7 @@ export default class SubmissionEditor extends React.Component {
             id="colorway"
             name="colorway"
             value={submission.colorway}
-            disabled={loading}
+            disabled={loading || disabled}
             onChange={this.update('colorway').bind(this)}
           />
         </FormGroup>
