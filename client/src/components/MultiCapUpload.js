@@ -201,12 +201,12 @@ const MultiCapUpload = props => {
             {processing === i
               ? <DataLoading />
               : <>
-                  <Button color="primary" disabled={uploading} onClick={_ => confirm(i)}>
-                    Not Duplicate
-                  </Button>
-                  {' '}
                   <Button color="secondary" disabled={uploading} onClick={_ => cancel(i)}>
                     It's a Duplicate
+                  </Button>
+                  {' '}
+                  <Button color="primary" disabled={uploading} onClick={_ => confirm(i)}>
+                    Not Duplicate
                   </Button>
                 </>
             }
@@ -257,7 +257,7 @@ const MultiCapUpload = props => {
               <Input
                 type="checkbox" name="wantsCredit" id="wantsCredit"
                 autoComplete="off"
-                disabled={uploading} checked={wantsCredit}
+                disabled={uploading || dupeChecked} checked={wantsCredit}
                 onChange={e => setWantsCredit(e.target.checked)}
               />{' '}
               Credit me for the submission
@@ -268,7 +268,7 @@ const MultiCapUpload = props => {
             <Input
               type="text" name="author" id="author"
               autoComplete="off"
-              value={author} disabled={uploading}
+              value={author} disabled={uploading || dupeChecked}
               onChange={e => setAuthor(e.target.value)}
             />
           </FormGroup>}
@@ -279,7 +279,7 @@ const MultiCapUpload = props => {
       </Row>
       <Row>
         <Col>
-          <Button color="primary" onClick={_ => submit(false)}>
+          <Button color="primary" onClick={_ => submit(false)} disabled={dupeChecked}>
             Submit
           </Button>
         </Col>
