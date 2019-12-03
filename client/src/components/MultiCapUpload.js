@@ -5,11 +5,11 @@ import {
 } from 'reactstrap';
 
 import { useAuth0 } from '../react-auth0-spa';
-import DataLoading from '../components/DataLoading';
 import Alert from "../components/Alert";
+import DataLoading from '../components/DataLoading';
+import ArtisanList from '../components/ArtisanList';
 import getUser from '../actions/getUser';
 import SubmissionEditor from './SubmissionEditor';
-import axios from 'axios';
 
 const MultiCapUpload = props => {
   const { getTokenSilently } = useAuth0();
@@ -22,6 +22,8 @@ const MultiCapUpload = props => {
   const [author, setAuthor] = useState('');
   const [message, setMessage] = useState(null);
   const [processing, setProcessing] = useState(null);
+  const [dupeChecked, setDupeChecked] = useState(false);
+  const [similars, setSimilars] = useState(null);
 
   useState(() => {
     setLoading(true);
@@ -89,35 +91,90 @@ const MultiCapUpload = props => {
     </Row>
   );
 
-  const submit = async () => {
+  const submit = async (dupeChecked=false) => {
+    console.log('dupeChecked', dupeChecked);
+    if (!dupeChecked) {
+      return await checkDupes();
+    }
+
+    return await upload();
+  };
+
+  const findSimilars = async p => {
+    const res = await fetch(`/api/artisans/similar?term=${encodeURI(`${p.sculpt} ${p.colorway}`)}`);
+    const matches = await res.json();
+    if (!matches.length) {
+      return null;
+    }
+    return matches;
+  };
+
+  const checkDupes = async () => {
+    console.log(' *** checkDupes');
     setUploading(true);
-    const token = await getTokenSilently();
+
+    const matches = [];
+    for (let i = 0; i < previews.length; i++) {
+      const p = previews[i];
+      setProcessing(i);
+      const match = await findSimilars(p);
+      console.log('match', i, match);
+      matches.push(match);
+    };
+
+    setProcessing(null);
+    setDupeChecked(true);
+    setUploading(false);
+
+    console.log('matches', matches.find(m => !!m));
+    if (!matches.find(m => !!m)) {
+      console.log('submitting');
+      await submit(true);
+    } else {
+      setSimilars(matches);
+    }
+  }
+
+  const upload = async () => {
+    setUploading(true);
 
     for (let i = 0; i < previews.length; i++) {
       const p = previews[i];
       setProcessing(i);
-      const formData = new FormData();
-      formData.append('maker', p.newMaker || p.maker);
-      formData.append('sculpt', p.sculpt);
-      formData.append('colorway', p.colorway);
-      formData.append('image', images[i]);
-      formData.append('anonymous', !wantsCredit);
-      if (wantsCredit) {
-        formData.append('author', author);
-      }
-      await axios.put('/api/submissions', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      p.image = images[i];
+      p.wantsCredit = wantsCredit;
+      p.author = author;
+      props.onUpload && await props.onUpload(p);
+      console.log(i, 'done', images);
     };
 
     setProcessing(null);
     setUploading(false);
+    setPreviews(null);
     setImages(null);
     setMessage(`Thanks for your submissions! We'll notify you when it gets processed.`)
   };
+
+  const content = previews && previews.map((p, i) => {
+    const similar = similars && similars[i];
+    console.log(i, similar);
+    const content = similar
+      ? <ArtisanList artisans={similar} />
+      : (processing === i
+          ? <DataLoading />
+          : <SubmissionEditor submission={p} disabled={uploading} />);
+
+    return (
+      <tr>
+        <td>
+          <img src={p.image} alt="Preview" />
+        </td>
+        <td width="100%">
+          {content}
+        </td>
+      </tr>
+    );
+  });
 
   const previewEl = previews && (
     <>
@@ -131,18 +188,7 @@ const MultiCapUpload = props => {
               </tr>
             </thead>
             <tbody>
-              {previews.map((p, i) => (
-                <tr>
-                  <td>
-                    <img src={p.image} alt="Preview" />
-                  </td>
-                  <td width="100%">
-                    {processing === i
-                      ? <DataLoading />
-                      : <SubmissionEditor submission={p} disabled={uploading} />}
-                  </td>
-                </tr>
-              ))}
+              {content}
             </tbody>
           </Table>
         </Col>
@@ -176,7 +222,7 @@ const MultiCapUpload = props => {
       </Row>
       <Row>
         <Col>
-          <Button color="primary" onClick={submit}>
+          <Button color="primary" onClick={_ => submit(false)}>
             Submit
           </Button>
         </Col>
@@ -184,8 +230,7 @@ const MultiCapUpload = props => {
     </>
   );
 
-  console.log('images', images);
-  console.log('previews', previews);
+  console.log('similars', similars);
 
   return (
     <>

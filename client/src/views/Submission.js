@@ -65,20 +65,29 @@ const Submission = () => {
     setImage(e.target.files[0]);
   };
 
-  const uploadForm = !image && <MultiCapUpload />;
-  // (
-  //   <Col>
-  //     <FormGroup className="mkb-files">
-  //       <Label for="image">
-  //         To start the submission process, select or drag the
-  //         artisan image to the box below:
-  //       </Label>
-  //       <Input type="file" name="file" id="image" onChange={imageHandler} />
-  //     </FormGroup>
-  //   </Col>
-  // );
-
   if (loading) return <DataLoading />;
+
+  const upload = async p => {
+    const token = await getTokenSilently();
+    const formData = new FormData();
+    formData.append('maker', p.newMaker || p.maker);
+    formData.append('sculpt', p.sculpt);
+    formData.append('colorway', p.colorway);
+    formData.append('image', p.image);
+    formData.append('anonymous', !p.wantsCredit);
+    if (p.wantsCredit) {
+      formData.append('author', p.author);
+    }
+    await axios.put('/api/submissions', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
+
+  const uploadForm = !image &&
+    <MultiCapUpload onUpload={upload} />;
 
   const findSimilars = async () => {
     const res = await fetch(`/api/artisans/similar?term=${encodeURI(`${sculpt} ${colorway}`)}`);
