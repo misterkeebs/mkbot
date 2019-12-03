@@ -145,6 +145,16 @@ const MultiCapUpload = props => {
     props.onUpload && await props.onUpload(p);
   };
 
+  const complete = () => {
+    setProcessing(null);
+    setUploading(false);
+    setPreviews(null);
+    setImages(null);
+    setDupeChecked(false);
+    setSimilars(null);
+    setMessage(`Thanks for your submissions! We'll notify you when it gets processed.`)
+  };
+
   const upload = async () => {
     setUploading(true);
 
@@ -152,12 +162,6 @@ const MultiCapUpload = props => {
       await submitOne(i);
       console.log(i, 'done', images);
     };
-
-    setProcessing(null);
-    setUploading(false);
-    setPreviews(null);
-    setImages(null);
-    setMessage(`Thanks for your submissions! We'll notify you when it gets processed.`)
   };
 
   const cancel = i => {
@@ -167,6 +171,14 @@ const MultiCapUpload = props => {
     newImages.splice(i, 1);
     setImages(newImages);
     setPreviews(newPreviews);
+
+    if (newPreviews.length < 1) complete();
+  };
+
+  const confirm = async i => {
+    await submitOne(i);
+    cancel(i);
+    setProcessing(null);
   };
 
   const content = previews && previews.map((p, i) => {
@@ -186,13 +198,18 @@ const MultiCapUpload = props => {
             </div>
           </td>
           <td>
-            <Button color="primary" disabled={uploading} onClick={_ => submitOne(i)}>
-              Not Duplicate
-            </Button>
-            {' '}
-            <Button color="secondary" disabled={uploading} onClick={_ => cancel(i)}>
-              It's a Duplicate
-            </Button>
+            {processing === i
+              ? <DataLoading />
+              : <>
+                  <Button color="primary" disabled={uploading} onClick={_ => confirm(i)}>
+                    Not Duplicate
+                  </Button>
+                  {' '}
+                  <Button color="secondary" disabled={uploading} onClick={_ => cancel(i)}>
+                    It's a Duplicate
+                  </Button>
+                </>
+            }
           </td>
         </>
       )
