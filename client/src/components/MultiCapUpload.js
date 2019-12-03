@@ -3,6 +3,7 @@ import {
   Table, Container, Row, Col, Button,
   FormGroup, Label, Input,
 } from 'reactstrap';
+import _ from 'lodash';
 
 import { useAuth0 } from '../react-auth0-spa';
 import Alert from "../components/Alert";
@@ -135,16 +136,20 @@ const MultiCapUpload = props => {
     }
   }
 
+  const submitOne = async i => {
+    const p = previews[i];
+    setProcessing(i);
+    p.image = images[i];
+    p.wantsCredit = wantsCredit;
+    p.author = author;
+    props.onUpload && await props.onUpload(p);
+  };
+
   const upload = async () => {
     setUploading(true);
 
     for (let i = 0; i < previews.length; i++) {
-      const p = previews[i];
-      setProcessing(i);
-      p.image = images[i];
-      p.wantsCredit = wantsCredit;
-      p.author = author;
-      props.onUpload && await props.onUpload(p);
+      await submitOne(i);
       console.log(i, 'done', images);
     };
 
@@ -155,23 +160,58 @@ const MultiCapUpload = props => {
     setMessage(`Thanks for your submissions! We'll notify you when it gets processed.`)
   };
 
+  const cancel = i => {
+    const newPreviews = _.clone(previews);
+    const newImages = _.clone(images);
+    newPreviews.splice(i, 1);
+    newImages.splice(i, 1);
+    setImages(newImages);
+    setPreviews(newPreviews);
+  };
+
   const content = previews && previews.map((p, i) => {
     const similar = similars && similars[i];
     console.log(i, similar);
-    const content = similar
-      ? <ArtisanList artisans={similar} />
-      : (processing === i
-          ? <DataLoading />
-          : <SubmissionEditor submission={p} disabled={uploading} />);
+    let content;
+
+    if (similar) {
+      content = (
+        <>
+          <td>
+            <div>
+              <b>Review the following matches:</b>
+            </div>
+            <div>
+              <ArtisanList artisans={similar} />
+            </div>
+          </td>
+          <td>
+            <Button color="primary" disabled={uploading} onClick={_ => submitOne(i)}>
+              Not Duplicate
+            </Button>
+            {' '}
+            <Button color="secondary" disabled={uploading} onClick={_ => cancel(i)}>
+              It's a Duplicate
+            </Button>
+          </td>
+        </>
+      )
+    } else {
+      content = (
+        <td width="100%">
+          {processing === i
+            ? <DataLoading />
+            : <SubmissionEditor submission={p} disabled={uploading} />}
+        </td>
+      );
+    }
 
     return (
       <tr>
         <td>
           <img src={p.image} alt="Preview" />
         </td>
-        <td width="100%">
-          {content}
-        </td>
+        {content}
       </tr>
     );
   });
