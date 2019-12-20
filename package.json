@@ -15,6 +15,8 @@
     "dedent": "^0.7.0",
     "discord.js": "^11.5.1",
     "dotenv": "^8.2.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-import": "^2.18.2",
     "express": "^4.17.1",
     "express-jwt": "^5.3.1",
     "express-jwt-authz": "^2.3.1",
