@@ -1,27 +1,35 @@
 import React, { Component } from "react";
 
-import { Row, Col } from "reactstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Row, Col, Table } from "reactstrap";
 
 import contentData from "../utils/contentData";
 
 class Content extends Component {
   render() {
+    const data = contentData.map(c => (
+      <tr>
+        <td><code>{c.command}</code></td>
+        <td>{c.description}</td>
+      </tr>
+    ));
+
     return (
       <div className="next-steps my-5">
         <h2 className="my-5 text-center">Features</h2>
         <Row className="d-flex justify-content-between">
-          {contentData.map((col, i) => (
-            <Col key={i} md={5} className="mb-4">
-              <h6 className="mb-3">
-                <a href={col.link}>
-                  <FontAwesomeIcon icon="link" className="mr-2" />
-                  {col.title}
-                </a>
-              </h6>
-              <p>{col.description}</p>
-            </Col>
-          ))}
+          <Col>
+            <Table>
+              <thead>
+                <tr>
+                  <th>Command</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data}
+              </tbody>
+            </Table>
+          </Col>
         </Row>
       </div>
     );

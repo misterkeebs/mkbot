@@ -1,28 +1,10 @@
 const contentData = [
-  {
-    title: "Search",
-    link: "https://auth0.com/docs/connections",
-    description:
-      "Search for an artisan using its maker, collection, sculpt or colorway."
-  },
-  {
-    title: "Community driven database",
-    link: "https://auth0.com/docs/multifactor-authentication",
-    description:
-      "Any user can submit a new entry by dragging a picture of the artisan into Discord and providing with the metadata."
-  },
-  {
-    title: "Community driven curation process",
-    link: "https://auth0.com/docs/anomaly-detection",
-    description:
-      "Assign reviewers that can check the content of each user submission and take action by amending, approving or rejecting."
-  },
-  {
-    title: "Wishlist Matching",
-    link: "https://auth0.com/docs/rules",
-    description:
-      "Allows users to mark artisans for sale and match users that are actively using for them."
-  }
+  { command: 'pic [term]', description: 'Shows an image of artisan matching the search term' },
+  { command: 'rand', description: 'Shows an image of a random artisan' },
+  { command: 'catalog', description: 'Shows a summary of the makers and number of artisans contained in our catalog' },
+  { command: 'list [command]', description: 'Manages the list of artisans you own. You can view, add or remove artisans to the list using this command.' },
+  { command: 'wishlist [command]', description: 'Manages the your wishlist. You can view, add or remove artisans to the list using this command.' },
+  { command: 'email [email]', description: 'Assigns an email address to your user so you can use the web interface' },
 ];
 
 export default contentData;
