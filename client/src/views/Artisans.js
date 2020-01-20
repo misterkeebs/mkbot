@@ -20,6 +20,7 @@ const Artisans = () => {
   const [loading, setLoading] = useState(false);
   const [makers, setMakers] = useState([]);
   const [error, setError] = useState(null);
+  const [lastArtisans, setLastArtisans] = useState([]);
   const { user, getTokenSilently, isAuthenticated } = useAuth0();
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -50,6 +51,16 @@ const Artisans = () => {
     }
   };
 
+  const getLatestArtisans = async () => {
+    try {
+      const response = await fetch(`/api/artisans?perPage=9&order=artisan_id+DESC`);
+      return response.json();
+    } catch (error) {
+      console.error('Error loading makers', error);
+      setError(error);
+    }
+  };
+
   const searchByTerm = async (term, page) => {
     const { artisans, pages } = await search(debouncedSearchTerm, page);
     setArtisans(artisans);
@@ -61,8 +72,13 @@ const Artisans = () => {
   useEffect(
     () => {
       setLoading(true);
-      getMakers().then(makers => {
+      const loadPromises = Promise.all([
+        getMakers(),
+        getLatestArtisans(),
+      ]);
+      loadPromises.then(([makers, lastArtisans]) => {
         setMakers(makers);
+        setLastArtisans(lastArtisans);
 
         if (debouncedSearchTerm) {
           search(debouncedSearchTerm, page).then(res => {
@@ -113,18 +129,32 @@ const Artisans = () => {
       </Row>
     ) : null;
 
+  const latest = (lastArtisans && lastArtisans.length) ? (
+    <Col>
+      <ArtisanList artisans={lastArtisans} />
+    </Col>
+  ) : null;
+
   const makersEl = !debouncedSearchTerm && (
     <Container className="mkb-makers">
-      {makers.map(maker => (
-        <Row key={maker.maker_id}>
-          <Col>
-            <NavLink to={`/catalogs/${maker.maker_id}-${slugify(maker.name)}`}>
-              {maker.name}&nbsp;
-              <Badge color="info" pill>{maker.count}</Badge>
-            </NavLink>
-          </Col>
-        </Row>
-      ))}
+      <Row>
+        <Col xs={3}>
+          {makers.map(maker => (
+            <Row key={maker.maker_id}>
+              <Col>
+                <NavLink to={`/catalogs/${maker.maker_id}-${slugify(maker.name)}`}>
+                  {maker.name}&nbsp;
+                  <Badge color="info" pill>{maker.count}</Badge>
+                </NavLink>
+              </Col>
+            </Row>
+          ))}
+        </Col>
+        <Col xs={9}>
+          <h3>Latest Additions</h3>
+          {latest}
+        </Col>
+      </Row>
     </Container>
   );
 

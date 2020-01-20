@@ -5,7 +5,7 @@ const db = require('../db');
 const table = 'artisans';
 
 class Artisan extends Base {
-  static async find(client, where) {
+  static async find(client, where, order) {
     const fields = 'a.artisan_id, a.maker_id, m.name AS maker, a.sculpt, a.colorway, a.image, a.submitted_by, a.submitted_at';
     const table = 'artisans a';
     const joins = ['makers m ON m.maker_id = a.maker_id'];
