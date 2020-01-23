@@ -16,11 +16,12 @@ class ConfirmationRoute {
       }
 
       const { discord_user_id, email } = conf;
-      let user = await User.find(this.client, { discord_user_id });
+      let user = await User.find(this.client, { discord_user_id }) || await User.find(this.client, { email });
       if (!user) {
         user = await User.create(this.client, { discord_user_id, email });
       } else {
         user.email = conf.email;
+        user.discord_user_id = discord_user_id;
         await user.save();
       }
 
