@@ -1,0 +1,14 @@
+div.clear {
+  position: relative;
+}
+div.clear svg {
+  position: absolute;
+  display: block;
+  top: 11px;
+  right: 4px;
+  cursor: pointer;
+}
+div.clear input {
+  padding-right: 16px;
+  box-sizing: border-box;
+}

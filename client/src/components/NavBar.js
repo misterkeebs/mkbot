@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Collapse,
   Container,
+  Form,
   Navbar,
   NavbarToggler,
   NavbarBrand,
@@ -19,6 +20,7 @@ import {
 } from "reactstrap";
 
 import { useAuth0 } from "../react-auth0-spa";
+import Search from './Search';
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -73,6 +75,10 @@ const NavBar = () => {
             <Nav className="mr-auto" navbar>
               {links}
             </Nav>
+            <Form inline>
+              <Search />
+            </Form>
+            &nbsp;
             <Nav className="d-none d-md-block" navbar>
               {!isAuthenticated && (
                 <NavItem>
