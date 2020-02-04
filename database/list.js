@@ -28,7 +28,7 @@ class List extends Base {
     const data = await db.select(client, {
       table: 'lists',
       where: ['user_id = $1', 'type = $2'],
-      data: [user_id, type]
+      data: [user_id, type],
     });
     if (!data) return;
     return new List(client, data);
@@ -61,7 +61,9 @@ class List extends Base {
     FROM list_artisans w
     JOIN artisans a ON w.artisan_id = a.artisan_id
     JOIN makers m ON m.maker_id = a.maker_id
-    WHERE w.list_id=$1;
+    WHERE w.list_id=$1
+    ORDER BY
+      m.name, a.sculpt, a.colorway
     `;
     return this.query(sql, [this.list_id]).then(res => {
       return res.rows;
