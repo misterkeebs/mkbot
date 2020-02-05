@@ -41,7 +41,7 @@ const Search = (props) => {
     setSearchTerm('');
   };
 
-  const results = artisans
+  const artisansEl = artisans && artisans.length
     ? artisans.map((a, i) => (
       <DropdownItem
         key={i}
@@ -51,7 +51,11 @@ const Search = (props) => {
           {a.maker} {a.sculpt} {a.colorway}
       </DropdownItem>
     ))
-    : <DropdownItem>No results</DropdownItem>;
+    : <DropdownItem>No matches for <b>{debouncedSearchTerm}</b></DropdownItem>
+
+  const results = artisans
+    ? artisansEl
+    : <DropdownItem>Type terms to start the search</DropdownItem>;
 
   const toggle = () => setResultsOpen(prevState => !prevState);
   const clearIcon = debouncedSearchTerm && <FontAwesomeIcon
