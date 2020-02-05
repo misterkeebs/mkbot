@@ -6,6 +6,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
+import DataLoading from './DataLoading';
 import './Search.css';
 
 const Search = (props) => {
@@ -53,9 +54,10 @@ const Search = (props) => {
     ))
     : <DropdownItem>No matches for <b>{debouncedSearchTerm}</b></DropdownItem>
 
-  const results = artisans
-    ? artisansEl
-    : <DropdownItem>Type terms to start the search</DropdownItem>;
+  const results = loading
+    ? <DropdownItem><DataLoading /></DropdownItem>
+    : (artisans ? artisansEl
+                : <DropdownItem>Type terms to start the search</DropdownItem>);
 
   const toggle = () => setResultsOpen(prevState => !prevState);
   const clearIcon = debouncedSearchTerm && <FontAwesomeIcon
