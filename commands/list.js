@@ -48,9 +48,9 @@ class ListCommand extends Base {
 
     const artisans = await list.getArtisans();
     const res = [
-      'Your list has the following artisans:',
-      '',
-      artisans.map(a => `- ${format(a)}`),
+      'here is your list:',
+      // '',
+      // artisans.map(a => `- ${format(a)}`),
     ];
 
     const attachment = new Discord.Attachment(await list.toImage(), 'list.png');
