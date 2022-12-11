@@ -15,7 +15,7 @@
     "dedent": "^0.7.0",
     "discord.js": "^11.5.1",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-jwt": "^5.3.1",
     "express-jwt-authz": "^2.3.1",
     "filenamify": "^4.1.0",
